@@ -1,0 +1,17 @@
+# Add cards in the format:
+# id (also serves as card image's order in the image sheet)
+# name
+# description
+# optional space to separate cards
+
+0
+Kek
+When Kek enters the battlefield,\ncreate Lol
+
+1
+Donkek
+Donkek has a nice long HORSE
+
+2
+Pussy-Cak
+Very cute Cak, that's it

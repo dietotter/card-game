@@ -1,0 +1,10 @@
+# IDE stuff
+.vscode
+.idea
+
+# OSX stuff
+.DS_Store
+
+# Build
+build/
+lib-build/
