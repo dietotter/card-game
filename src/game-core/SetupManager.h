@@ -11,14 +11,19 @@ class SetupManager
 private:
     std::vector<Card> m_library;
     sf::Texture m_cardTexture;
-
-public:
-    SetupManager() = default;
+    sf::Texture m_cardBackTexture;
 
     void loadLibraryFromFile();
     void createCardTexture();
     void createCardBackTexture();
+    void assignCardTextures();
 
-    const std::vector<Card>& getLibrary() const { return m_library; }
+public:
+    SetupManager() = default;
+
+    bool initialize();
+
+    std::vector<Card>& getLibrary() { return m_library; }
+    std::vector<Card> getLibrary() const { return m_library; }
     const sf::Texture& getCardTexture() const { return m_cardTexture; }
 };

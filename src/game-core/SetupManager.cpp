@@ -2,9 +2,28 @@
 #include "core-constants.h"
 
 #include <fstream>
+#include <exception>
 #include <stdexcept>
 #include <string>
 #include <regex>
+
+bool SetupManager::initialize()
+{
+    try
+    {
+        loadLibraryFromFile();
+        createCardTexture();
+        createCardBackTexture();
+        assignCardTextures();
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
+
+    return true;
+}
 
 void SetupManager::loadLibraryFromFile()
 {
@@ -71,13 +90,12 @@ void SetupManager::createCardTexture()
     // Create card text to be drawn (used for both name and description)
     sf::Text cardText;
     cardText.setFont(font);
-    cardText.setCharacterSize(cnst::cardFontSize);
     cardText.setFillColor(sf::Color(cnst::cardTextColor));
 
     // Load card images and set up sprite for drawing corresponding image onto each card
     sf::Texture cardsImageSheet;
     if (!cardsImageSheet.loadFromFile("images/cards-sheet.png"))
-    {   
+    {
         throw std::runtime_error("Cards image sheet couldn't be loaded");
     }
 
@@ -92,12 +110,16 @@ void SetupManager::createCardTexture()
     }
 
     cardRenderTexture.clear(sf::Color(cnst::cardBackgroundColor));
-    for (auto &card : m_library)
+    for (const auto &card : m_library)
     {
+        // Draw card name
         cardText.setString(card.getName());
+        cardText.setCharacterSize(cnst::cardNameSize);
+        cardText.setStyle(sf::Text::Bold);
         cardText.setPosition(cnst::cardWidth * card.getId() + cnst::cardContentXOffset, cnst::cardNameYOffset);
         cardRenderTexture.draw(cardText);
 
+        // Draw card image
         cardsImageSprite.setTextureRect(sf::IntRect(
             cnst::cardImageWidth * card.getId(),
             0,
@@ -107,12 +129,45 @@ void SetupManager::createCardTexture()
         cardsImageSprite.setPosition(cnst::cardWidth * card.getId() + cnst::cardContentXOffset, cnst::cardImageYOffset);
         cardRenderTexture.draw(cardsImageSprite);
 
+        // Draw card description
         cardText.setString(card.getDescription());
+        cardText.setCharacterSize(cnst::cardDescriptionSize);
+        cardText.setStyle(sf::Text::Regular);
         cardText.setPosition(cnst::cardWidth * card.getId() + cnst::cardContentXOffset, cnst::cardDescriptionYOffset);
         cardRenderTexture.draw(cardText);
-
     }
     cardRenderTexture.display();
     
     m_cardTexture = cardRenderTexture.getTexture();
+}
+
+void SetupManager::createCardBackTexture()
+{
+    if (!m_cardBackTexture.loadFromFile("images/cardbacks-sheet.png"))
+    {
+        throw std::runtime_error("Card backs image sheet couldn't be loaded");
+    }
+}
+
+void SetupManager::assignCardTextures()
+{
+    for (auto &card : m_library)
+    {
+        card.setFaceUpTexture(m_cardTexture);
+        card.setFaceUpTextureRect(sf::IntRect(
+            cnst::cardWidth * card.getId(),
+            0,
+            cnst::cardWidth,
+            cnst::cardHeight
+        ));
+
+        card.setFaceDownTexture(m_cardBackTexture);
+        // when entering online play, the hosting (or the connecting) player should have the card back texture rect changed
+        card.setFaceDownTextureRect(sf::IntRect(
+            0,
+            0,
+            cnst::cardWidth,
+            cnst::cardHeight
+        ));
+    }
 }
