@@ -29,6 +29,7 @@ target_link_libraries(Nikcraft sfml-graphics sfml-audio)
 
 target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/EventHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Card.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/SetupManager.cpp
 )
