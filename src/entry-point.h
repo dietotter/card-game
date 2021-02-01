@@ -1,6 +1,7 @@
 #include "game-core/SetupManager.h"
 #include "game-core/core-constants.h"
 #include "game-core/Card.h"
+#include "game-core/Deck.h"
 #include "EventHandler.h"
 
 #include <SFML/Graphics.hpp>
@@ -28,11 +29,19 @@ int run()
         // clear the window with black color
         window.clear(sf::Color::Black);
 
+        Deck deck1{ setupManager.loadDeckFromFile("data/deck1.dat") };
+        Deck deck2{ deck1 };
+
+        deck2.setPosition(cnst::screenWidth - cnst::cardWidth - 10, cnst::screenHeight - cnst::cardHeight - 10);
+
+        window.draw(deck1);
+        window.draw(deck2);
+
         // draw everything here...
-        for (auto it{ library.rbegin() }; it != library.rend(); ++it)
-        {
-            window.draw(*it);
-        }
+        // for (auto it{ library.rbegin() }; it != library.rend(); ++it)
+        // {
+        //     window.draw(*it);
+        // }
 
         // end the current frame
         window.display();

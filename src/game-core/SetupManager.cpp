@@ -4,7 +4,6 @@
 #include <fstream>
 #include <exception>
 #include <stdexcept>
-#include <string>
 #include <regex>
 
 bool SetupManager::initialize()
@@ -170,4 +169,28 @@ void SetupManager::assignCardTextures()
             cnst::cardHeight
         ));
     }
+}
+
+Deck SetupManager::loadDeckFromFile(const std::string &filename)
+{
+    std::ifstream inf{ filename };
+
+    if (!inf)
+    {
+        throw std::runtime_error("Couldn't open cards data file");
+    }
+
+    Deck deck;
+
+    while (inf)
+    {
+        // TODO error handling on wrong input
+        int cardId;
+        inf >> cardId;
+        
+        // this assumes that card id = card's position in library
+        deck.putCardOnTop(m_library[cardId]);
+    }
+
+    return deck;
 }

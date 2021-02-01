@@ -31,6 +31,7 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/EventHandler.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Card.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Deck.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/SetupManager.cpp
 )
 
