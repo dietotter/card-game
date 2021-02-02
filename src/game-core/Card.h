@@ -25,6 +25,7 @@ public:
     int getId() const { return m_id; }
     const std::string& getName() const { return m_name; }
     const std::string& getDescription() const { return m_description; }
+    sf::FloatRect getBoundingBox() const;
 
     void setFaceUpTexture(const sf::Texture &texture) { m_faceUpSprite.setTexture(texture); }
     void setFaceUpTextureRect(const sf::IntRect& rectangle) { m_faceUpSprite.setTextureRect(rectangle); }

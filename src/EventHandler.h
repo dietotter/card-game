@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <memory>
+
 class EventHandler
 {
 private:
@@ -21,5 +23,5 @@ public:
     // probably will need refactoring when game field is introduced
     void handleWindowEvents() {}
     void handleUIEvents() {}
-    void handleGameEvents(std::vector<GameObject*> &objectList);
+    void handleGameEvents(std::vector<std::unique_ptr<GameObject>> &objectList);
 };

@@ -6,11 +6,14 @@ Card::Card(int id, const std::string &name, const std::string &description)
 {
 }
 
+sf::FloatRect Card::getBoundingBox() const
+{
+    return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
+}
+
 bool Card::contains(int x, int y) const
 {
-    sf::FloatRect bounds{ getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
-
-    return bounds.contains(x, y);
+    return getBoundingBox().contains(x, y);
 }
 
 bool Card::handleEvent(const sf::Event &event)

@@ -4,7 +4,7 @@
 
 sf::Vector2i EventHandler::mousePosition{};
 
-void EventHandler::handleGameEvents(std::vector<GameObject*> &objectList)
+void EventHandler::handleGameEvents(std::vector<std::unique_ptr<GameObject>> &objectList)
 {
     // check all the window's events that were triggered since the last iteration of the loop
     sf::Event event;
@@ -29,7 +29,7 @@ void EventHandler::handleGameEvents(std::vector<GameObject*> &objectList)
             }
         }
 
-        for (auto gameObject : objectList)
+        for (auto &gameObject : objectList)
         {
             bool handled{ gameObject->handleEvent(event) };
 

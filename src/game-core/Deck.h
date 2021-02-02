@@ -20,8 +20,8 @@ public:
     const Card& peek() const;
     Card takeTopCard();
     void shuffle();
-    void putCardOnTop(Card card);
-    void putCardOnBottom(Card card);
+    void putCardOnTop(const Card &card);
+    void putCardOnBottom(const Card &card);
 
     std::size_t size() const { return m_cardList.size(); }
     bool isEmpty() const { return m_cardList.empty(); }

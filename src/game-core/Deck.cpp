@@ -33,20 +33,24 @@ void Deck::shuffle()
     std::shuffle(m_cardList.begin(), m_cardList.end(), rnd::RandomCore::mt);
 }
 
-void Deck::putCardOnTop(Card card)
+void Deck::putCardOnTop(const Card &card)
 {
-    card.setOrigin(getPosition());
-    card.setPosition(0, 0);
-    card.faceUp = false;
     m_cardList.push_back(card);
+    Card &addedCard{ m_cardList.back() };
+
+    addedCard.setOrigin(getPosition());
+    addedCard.setPosition(0, 0);
+    addedCard.faceUp = false;
 }
 
-void Deck::putCardOnBottom(Card card)
+void Deck::putCardOnBottom(const Card &card)
 {
-    card.setOrigin(getPosition());
-    card.setPosition(0, 0);
-    card.faceUp = false;
     m_cardList.insert(m_cardList.begin(), card);
+    Card &addedCard{ m_cardList.front() };
+
+    addedCard.setOrigin(getPosition());
+    addedCard.setPosition(0, 0);
+    addedCard.faceUp = false;
 }
 
 Deck& Deck::operator=(const Deck &deck)
