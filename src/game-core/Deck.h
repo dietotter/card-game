@@ -1,12 +1,13 @@
 #pragma once
 
+#include "GameObject.h"
 #include "Card.h"
 
 #include <SFML/Graphics.hpp>
 
 #include <vector>
 
-class Deck : public sf::Drawable, public sf::Transformable
+class Deck : public GameObject
 {
 private:
     std::vector<Card> m_cardList;
@@ -27,5 +28,8 @@ public:
 
     Deck& operator=(const Deck &deck);
     
+    virtual bool contains(int x, int y) const override;
+    // virtual bool handleEvent(const sf::Event &event) override;
+
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };

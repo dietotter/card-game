@@ -1,6 +1,10 @@
 #include "EventHandler.h"
 
-void EventHandler::handleGameEvents(std::vector<Card> &library)
+#include <algorithm>
+
+sf::Vector2i EventHandler::mousePosition{};
+
+void EventHandler::handleGameEvents(std::vector<GameObject*> &objectList)
 {
     // check all the window's events that were triggered since the last iteration of the loop
     sf::Event event;
@@ -12,58 +16,30 @@ void EventHandler::handleGameEvents(std::vector<Card> &library)
             m_window.close();
         }
 
-        if (event.type == sf::Event::KeyPressed)
-        {
-            if (event.key.code == sf::Keyboard::F)
-            {
-                for (auto &card : library)
-                {
-                    if (card.selected)
-                    {
-                        card.flip();
-                        break;
-                    }
-                }
-            }
-        }
-
         if (event.type == sf::Event::MouseButtonPressed)
         {
-            for (auto it{ library.begin() }; it != library.end(); ++it)
+            for (auto it{ objectList.begin() }; it != objectList.end(); ++it)
             {
-                if (it->contains(event.mouseButton.x, event.mouseButton.y))
+                if ((*it)->contains(event.mouseButton.x, event.mouseButton.y))
                 {
-                    it->selected = true;
-                    // move card to the front if it is clicked on
-                    std::rotate(library.begin(), it, it + 1);
+                    // move object to the front if it is clicked on
+                    std::rotate(objectList.begin(), it, it + 1);
                     break;
                 }
             }
         }
 
-        if (event.type == sf::Event::MouseButtonReleased)
+        for (auto gameObject : objectList)
         {
-            for (auto &card : library)
+            bool handled{ gameObject->handleEvent(event) };
+
+            if (handled)
             {
-                card.selected = false;
+                break;
             }
         }
 
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        {   
-            if (event.type == sf::Event::MouseMoved)
-            {
-                for (auto &card : library)
-                {
-                    if (card.selected)
-                    {
-                        card.move(event.mouseMove.x - m_mousePosition.x, event.mouseMove.y - m_mousePosition.y);
-                        break;
-                    }
-                }
-            }
-        }
-
-        m_mousePosition = sf::Mouse::getPosition(m_window);
+        // update mouse position
+        mousePosition = sf::Mouse::getPosition(m_window);
     }
 }

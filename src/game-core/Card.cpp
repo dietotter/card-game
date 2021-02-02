@@ -6,11 +6,29 @@ Card::Card(int id, const std::string &name, const std::string &description)
 {
 }
 
-bool Card::contains(int x, int y)
+bool Card::contains(int x, int y) const
 {
     sf::FloatRect bounds{ getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
 
     return bounds.contains(x, y);
+}
+
+bool Card::handleEvent(const sf::Event &event)
+{
+    bool handled{ GameObject::handleEvent(event) };
+
+    if (handled)
+    {
+        return true;
+    }
+
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F && selected)
+    {
+        flip();
+        return true;
+    }
+
+    return false;
 }
 
 void Card::draw(sf::RenderTarget &target, sf::RenderStates states) const

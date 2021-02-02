@@ -1,11 +1,13 @@
 #pragma once
 
+#include "GameObject.h"
+
 #include <SFML/Graphics.hpp>
 
 #include <string>
 #include <iostream>
 
-class Card : public sf::Drawable, public sf::Transformable
+class Card : public GameObject
 {
 private:
     int m_id;
@@ -16,7 +18,6 @@ private:
 
 public:
     bool faceUp{ true };
-    bool selected{ false };
 
 public:
     Card(int id, const std::string &name, const std::string &description);
@@ -32,7 +33,8 @@ public:
 
     void flip() { faceUp = !faceUp; }
 
-    bool contains(int x, int y);
+    virtual bool contains(int x, int y) const override;
+    virtual bool handleEvent(const sf::Event &event) override;
     
     virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 };

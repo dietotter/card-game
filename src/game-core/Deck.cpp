@@ -1,5 +1,6 @@
 #include "Deck.h"
 #include "RandomCore.h"
+#include "core-constants.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -56,6 +57,36 @@ Deck& Deck::operator=(const Deck &deck)
     }
 
     return *this;
+}
+
+bool Deck::contains(int x, int y) const
+{
+    // check if mouse is touching the bottom card
+    sf::FloatRect bounds{ getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
+    if (bounds.contains(x, y))
+    {
+        return true;
+    }
+
+    int counter{ 1 };
+    for (const auto &card : m_cardList)
+    {
+        // similarly how cards are drawn, check every third and the top card for mouse contact
+        if (counter % 3 == 0 || counter == size() - 1)
+        {
+            bounds.top += 2;
+            bounds.left += 2;
+
+            if (bounds.contains(x, y))
+            {
+                return true;
+            }
+        }
+
+        ++counter;
+    }
+
+    return false;
 }
 
 void Deck::draw(sf::RenderTarget &target, sf::RenderStates states) const
