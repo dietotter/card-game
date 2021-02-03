@@ -1,10 +1,24 @@
 #include "Hand.h"
 #include "core-constants.h"
 
+int Hand::getReadjustedX()
+{
+    return (cnst::screenWidth - size() * cnst::cardWidth) / 2;
+}
+
+int Hand::getReadjustedY()
+{
+    return cnst::screenHeight - cnst::cardHeight;
+}
+
 // readjust position of the hand to be centered, when a card is put into or out of the hand
 void Hand::readjustPosition()
 {
-    setPosition((cnst::screenWidth - size() * cnst::cardWidth) / 2, cnst::screenHeight - cnst::cardHeight);
+    setPosition(getReadjustedX(), getReadjustedY());
+    for (int i{ 0 }; i < size(); ++i)
+    {
+        m_cardList[i].setPosition(getReadjustedX() + i * cnst::cardWidth, getReadjustedY());
+    }
 }
 
 Hand::Hand()
@@ -32,11 +46,9 @@ void Hand::putCardIn(const Card &card)
     m_cardList.push_back(card);
     Card &addedCard{ m_cardList.back() };
 
-    addedCard.setOrigin(getPosition());
-    addedCard.setPosition((m_cardList.size() - 1) * cnst::cardWidth, 0);
-    addedCard.faceUp = true;
-
     readjustPosition();
+
+    addedCard.faceUp = true;
 }
 
 bool Hand::contains(int x, int y) const
@@ -57,7 +69,7 @@ bool Hand::handleEvent(const sf::Event &event)
     int index{ 0 };
     for (auto &card : m_cardList)
     {
-        card.handleEvent(event);
+        bool handled{ card.handleEvent(event) };
 
         // if mouse is released and Card is outside of the Hand, drop it onto the field
         // (otherwise, clip it back to its position in hand)
@@ -65,7 +77,7 @@ bool Hand::handleEvent(const sf::Event &event)
         {
             if (card.getBoundingBox().intersects(getBoundingBox()))
             {
-                card.setPosition(index * cnst::cardWidth, 0);
+                card.setPosition(getReadjustedX() + index * cnst::cardWidth, getReadjustedY());
             }
             else
             {
@@ -78,7 +90,13 @@ bool Hand::handleEvent(const sf::Event &event)
                 // 2. Game (Board etc) is a member reference variable on every gameobject
                 // OR it is passed in handleEvent. This way, I could handle the taking out onto the field thing right here
                 takeCardOut(index);
+                handled = true;
             }
+        }
+
+        if (handled)
+        {
+            return true;
         }
 
         ++index;
@@ -96,8 +114,11 @@ void Hand::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
 
+    sf::RectangleShape handRect{ sf::Vector2f(cnst::cardWidth * size(), cnst::cardHeight) };
+    target.draw(handRect, states);
+
     for (const auto &card : m_cardList)
     {
-        target.draw(card, states);
+        target.draw(card);
     }
 }

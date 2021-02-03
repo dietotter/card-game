@@ -12,6 +12,8 @@ class Hand : public GameObject
 private:
     std::vector<Card> m_cardList;
 
+    int getReadjustedX();
+    int getReadjustedY();
     void readjustPosition();
 
 public:
