@@ -7,27 +7,31 @@
 
 #include <vector>
 
-class Hand : public GameObject
-{
-private:
-    std::vector<Card> m_cardList;
+namespace nik {
 
-    int getReadjustedX();
-    int getReadjustedY();
-    void readjustPosition();
+    class Hand : public GameObject
+    {
+    private:
+        std::vector<Card> m_cardList;
 
-public:
-    Hand();
+        int getReadjustedX();
+        int getReadjustedY();
+        void readjustPosition();
 
-    Card takeCardOut(unsigned int index);
-    void putCardIn(const Card& card);
+    public:
+        Hand();
 
-    std::size_t size() const { return m_cardList.size(); }
-    bool isEmpty() const { return m_cardList.empty(); }
-    sf::FloatRect getBoundingBox() const;
+        Card takeCardOut(unsigned int index);
+        void putCardIn(const Card& card);
 
-    virtual bool contains(int x, int y) const override;
-    virtual bool handleEvent(const sf::Event &event) override;
+        std::size_t size() const { return m_cardList.size(); }
+        bool isEmpty() const { return m_cardList.empty(); }
+        sf::FloatRect getBoundingBox() const;
 
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-};
+        virtual bool contains(int x, int y) const override;
+        virtual bool handleEvent(const sf::Event &event, Board &board) override;
+
+        virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    };
+
+}

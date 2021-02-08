@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cnst {
+namespace nik::cnst {
 
     inline constexpr int screenWidth{ 1920 };
     inline constexpr int screenHeight{ 1080 };
@@ -24,4 +24,5 @@ namespace cnst {
     inline constexpr int cardImageYOffset{ cardNameYOffset * 2 + cardNameSize };
     inline constexpr int cardDescriptionYOffset{ cardImageYOffset + cardImageHeight + cardNameYOffset };
     
+    inline constexpr unsigned int boardBackgroundColor{ 0x3D4849FF };
 }

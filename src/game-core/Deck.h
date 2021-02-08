@@ -7,29 +7,33 @@
 
 #include <vector>
 
-class Deck : public GameObject
-{
-private:
-    std::vector<Card> m_cardList;
+namespace nik {
 
-public:
-    Deck() = default;
-    Deck(const std::vector<Card> &cardList) : m_cardList{ cardList } {}
-    Deck(const Deck &deck) : m_cardList{ deck.m_cardList } {}
+    class Deck : public GameObject
+    {
+    private:
+        std::vector<Card> m_cardList;
 
-    const Card& peek() const;
-    Card takeTopCard();
-    void shuffle();
-    void putCardOnTop(const Card &card);
-    void putCardOnBottom(const Card &card);
+    public:
+        Deck() = default;
+        Deck(const std::vector<Card> &cardList) : m_cardList{ cardList } {}
+        Deck(const Deck &deck) : m_cardList{ deck.m_cardList } {}
 
-    std::size_t size() const { return m_cardList.size(); }
-    bool isEmpty() const { return m_cardList.empty(); }
+        const Card& peek() const;
+        Card takeTopCard();
+        void shuffle();
+        void putCardOnTop(const Card &card);
+        void putCardOnBottom(const Card &card);
 
-    Deck& operator=(const Deck &deck);
-    
-    virtual bool contains(int x, int y) const override;
-    // virtual bool handleEvent(const sf::Event &event) override;
+        std::size_t size() const { return m_cardList.size(); }
+        bool isEmpty() const { return m_cardList.empty(); }
 
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-};
+        Deck& operator=(const Deck &deck);
+        
+        virtual bool contains(int x, int y) const override;
+        // virtual bool handleEvent(const sf::Event &event) override;
+
+        virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    };
+
+}

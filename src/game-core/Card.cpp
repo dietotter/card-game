@@ -1,49 +1,53 @@
 #include "Card.h"
-#include "core-constants.h"
+#include "../core-constants.h"
 
-Card::Card(int id, const std::string &name, const std::string &description)
-    : m_id{ id }, m_name{ name }, m_description{ description }
-{
-}
+namespace nik {
 
-sf::FloatRect Card::getBoundingBox() const
-{
-    return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
-}
-
-bool Card::contains(int x, int y) const
-{
-    return getBoundingBox().contains(x, y);
-}
-
-bool Card::handleEvent(const sf::Event &event)
-{
-    bool handled{ GameObject::handleEvent(event) };
-
-    if (handled)
+    Card::Card(int id, const std::string &name, const std::string &description)
+        : m_id{ id }, m_name{ name }, m_description{ description }
     {
-        return true;
     }
 
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F && selected)
+    sf::FloatRect Card::getBoundingBox() const
     {
-        flip();
-        return true;
+        return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
     }
 
-    return false;
-}
-
-void Card::draw(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    states.transform *= getTransform();
-
-    if (faceUp)
+    bool Card::contains(int x, int y) const
     {
-        target.draw(m_faceUpSprite, states);
+        return getBoundingBox().contains(x, y);
     }
-    else
+
+    bool Card::handleEvent(const sf::Event &event, Board &board)
     {
-        target.draw(m_faceDownSprite, states);
+        bool handled{ GameObject::handleEvent(event, board) };
+
+        if (handled)
+        {
+            return true;
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F && selected)
+        {
+            flip();
+            return true;
+        }
+
+        return false;
     }
+
+    void Card::draw(sf::RenderTarget &target, sf::RenderStates states) const
+    {
+        states.transform *= getTransform();
+
+        if (faceUp)
+        {
+            target.draw(m_faceUpSprite, states);
+        }
+        else
+        {
+            target.draw(m_faceDownSprite, states);
+        }
+    }
+
 }

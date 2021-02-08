@@ -2,5 +2,5 @@
 
 int main()
 {
-    return run();
+    return nik::run();
 }

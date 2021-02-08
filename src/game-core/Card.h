@@ -1,41 +1,46 @@
 #pragma once
 
 #include "GameObject.h"
+#include "Board.h"
 
 #include <SFML/Graphics.hpp>
 
 #include <string>
 #include <iostream>
 
-class Card : public GameObject
-{
-private:
-    int m_id;
-    std::string m_name;
-    std::string m_description;
-    sf::Sprite m_faceUpSprite;
-    sf::Sprite m_faceDownSprite;
+namespace nik {
 
-public:
-    bool faceUp{ true };
+    class Card : public GameObject
+    {
+    private:
+        int m_id;
+        std::string m_name;
+        std::string m_description;
+        sf::Sprite m_faceUpSprite;
+        sf::Sprite m_faceDownSprite;
 
-public:
-    Card(int id, const std::string &name, const std::string &description);
+    public:
+        bool faceUp{ true };
 
-    int getId() const { return m_id; }
-    const std::string& getName() const { return m_name; }
-    const std::string& getDescription() const { return m_description; }
-    sf::FloatRect getBoundingBox() const;
+    public:
+        Card(int id, const std::string &name, const std::string &description);
 
-    void setFaceUpTexture(const sf::Texture &texture) { m_faceUpSprite.setTexture(texture); }
-    void setFaceUpTextureRect(const sf::IntRect& rectangle) { m_faceUpSprite.setTextureRect(rectangle); }
-    void setFaceDownTexture(const sf::Texture &texture) { m_faceDownSprite.setTexture(texture); }
-    void setFaceDownTextureRect(const sf::IntRect& rectangle) { m_faceDownSprite.setTextureRect(rectangle); }
+        int getId() const { return m_id; }
+        const std::string& getName() const { return m_name; }
+        const std::string& getDescription() const { return m_description; }
+        sf::FloatRect getBoundingBox() const;
 
-    void flip() { faceUp = !faceUp; }
+        void setFaceUpTexture(const sf::Texture &texture) { m_faceUpSprite.setTexture(texture); }
+        void setFaceUpTextureRect(const sf::IntRect& rectangle) { m_faceUpSprite.setTextureRect(rectangle); }
+        void setFaceDownTexture(const sf::Texture &texture) { m_faceDownSprite.setTexture(texture); }
+        void setFaceDownTextureRect(const sf::IntRect& rectangle) { m_faceDownSprite.setTextureRect(rectangle); }
 
-    virtual bool contains(int x, int y) const override;
-    virtual bool handleEvent(const sf::Event &event) override;
-    
-    virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-};
+        void flip() { faceUp = !faceUp; }
+
+        virtual bool contains(int x, int y) const override;
+        virtual bool handleEvent(const sf::Event &event, Board &board) override;
+        
+        virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    };
+
+}

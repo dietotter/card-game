@@ -1,119 +1,123 @@
 #include "Deck.h"
-#include "RandomCore.h"
-#include "core-constants.h"
+#include "../core-constants.h"
+#include "../core-globals.h"
 
 #include <algorithm>
 #include <stdexcept>
 
-const Card& Deck::peek() const
-{
-    if (isEmpty())
+namespace nik {
+
+    const Card& Deck::peek() const
     {
-        throw std::underflow_error("Trying to peek an empty deck");
-    }
-
-    return m_cardList.back();
-}
-
-Card Deck::takeTopCard()
-{
-    if (isEmpty())
-    {
-        throw std::underflow_error("Trying to take a card from an empty deck");
-    }
-
-    Card topCard{ m_cardList.back() };
-    m_cardList.pop_back();
-
-    return topCard;
-}
-
-void Deck::shuffle()
-{
-    std::shuffle(m_cardList.begin(), m_cardList.end(), rnd::RandomCore::mt);
-}
-
-void Deck::putCardOnTop(const Card &card)
-{
-    m_cardList.push_back(card);
-    Card &addedCard{ m_cardList.back() };
-
-    addedCard.setOrigin(getPosition());
-    addedCard.setPosition(0, 0);
-    addedCard.faceUp = false;
-}
-
-void Deck::putCardOnBottom(const Card &card)
-{
-    m_cardList.insert(m_cardList.begin(), card);
-    Card &addedCard{ m_cardList.front() };
-
-    addedCard.setOrigin(getPosition());
-    addedCard.setPosition(0, 0);
-    addedCard.faceUp = false;
-}
-
-Deck& Deck::operator=(const Deck &deck)
-{
-    if (this != &deck)
-    {
-        this->m_cardList = deck.m_cardList;
-    }
-
-    return *this;
-}
-
-bool Deck::contains(int x, int y) const
-{
-    // check if mouse is touching the bottom card
-    sf::FloatRect bounds{ getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
-    if (bounds.contains(x, y))
-    {
-        return true;
-    }
-
-    int counter{ 1 };
-    for (const auto &card : m_cardList)
-    {
-        // similarly how cards are drawn, check every third and the top card for mouse contact
-        if (counter % 3 == 0 || counter == size() - 1)
+        if (isEmpty())
         {
-            bounds.top += 2;
-            bounds.left += 2;
+            throw std::underflow_error("Trying to peek an empty deck");
+        }
 
-            if (bounds.contains(x, y))
+        return m_cardList.back();
+    }
+
+    Card Deck::takeTopCard()
+    {
+        if (isEmpty())
+        {
+            throw std::underflow_error("Trying to take a card from an empty deck");
+        }
+
+        Card topCard{ m_cardList.back() };
+        m_cardList.pop_back();
+
+        return topCard;
+    }
+
+    void Deck::shuffle()
+    {
+        std::shuffle(m_cardList.begin(), m_cardList.end(), glob::mt);
+    }
+
+    void Deck::putCardOnTop(const Card &card)
+    {
+        m_cardList.push_back(card);
+        Card &addedCard{ m_cardList.back() };
+
+        addedCard.setOrigin(getPosition());
+        addedCard.setPosition(0, 0);
+        addedCard.faceUp = false;
+    }
+
+    void Deck::putCardOnBottom(const Card &card)
+    {
+        m_cardList.insert(m_cardList.begin(), card);
+        Card &addedCard{ m_cardList.front() };
+
+        addedCard.setOrigin(getPosition());
+        addedCard.setPosition(0, 0);
+        addedCard.faceUp = false;
+    }
+
+    Deck& Deck::operator=(const Deck &deck)
+    {
+        if (this != &deck)
+        {
+            this->m_cardList = deck.m_cardList;
+        }
+
+        return *this;
+    }
+
+    bool Deck::contains(int x, int y) const
+    {
+        // check if mouse is touching the bottom card
+        sf::FloatRect bounds{ getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
+        if (bounds.contains(x, y))
+        {
+            return true;
+        }
+
+        int counter{ 1 };
+        for (const auto &card : m_cardList)
+        {
+            // similarly how cards are drawn, check every third and the top card for mouse contact
+            if (counter % 3 == 0 || counter == size() - 1)
             {
-                return true;
+                bounds.top += 2;
+                bounds.left += 2;
+
+                if (bounds.contains(x, y))
+                {
+                    return true;
+                }
             }
+
+            ++counter;
         }
 
-        ++counter;
+        return false;
     }
 
-    return false;
-}
-
-void Deck::draw(sf::RenderTarget &target, sf::RenderStates states) const
-{
-    states.transform *= getTransform();
-
-    int counter{ 0 };
-    for (const auto &card : m_cardList)
+    void Deck::draw(sf::RenderTarget &target, sf::RenderStates states) const
     {
-        // draw bottom card
-        if (counter == 0)
-        {
-            target.draw(card, states);
-        }
-        // draw top card and every third card
-        // draw them with slight offset to imitate deck depth
-        else if (counter % 3 == 0 || counter == size() - 1)
-        {
-            states.transform.translate(2, 2);
+        states.transform *= getTransform();
 
-            target.draw(card, states);
-        }
+        int counter{ 0 };
+        for (const auto &card : m_cardList)
+        {
+            // draw bottom card
+            if (counter == 0)
+            {
+                target.draw(card, states);
+            }
+            // draw top card and every third card
+            // draw them with slight offset to imitate deck depth
+            else if (counter % 3 == 0 || counter == size() - 1)
+            {
+                states.transform.translate(2, 2);
 
-        ++counter;
+                target.draw(card, states);
+            }
+
+            ++counter;
+        }
     }
+
 }

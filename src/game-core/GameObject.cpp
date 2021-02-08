@@ -1,26 +1,33 @@
 #include "GameObject.h"
-#include "../EventHandler.h"
+#include "../core-globals.h"
 
-bool GameObject::handleEvent(const sf::Event &event)
-{
-    if (event.type == sf::Event::MouseButtonPressed && contains(event.mouseButton.x, event.mouseButton.y))
+namespace nik {
+
+    bool GameObject::handleEvent(const sf::Event &event, Board &board)
     {
-        selected = true;
+        if (event.type == sf::Event::MouseButtonPressed && contains(event.mouseButton.x, event.mouseButton.y))
+        {
+            selected = true;
 
-        return true;
+            return true;
+        }
+
+        if (event.type == sf::Event::MouseButtonReleased)
+        {
+            selected = false;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
+        {
+            move(
+                event.mouseMove.x - glob::MouseTracker::getInstance().previousMousePosition.x,
+                event.mouseMove.y - glob::MouseTracker::getInstance().previousMousePosition.y
+            );
+
+            return true;
+        }
+
+        return false;
     }
 
-    if (event.type == sf::Event::MouseButtonReleased)
-    {
-        selected = false;
-    }
-
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
-    {
-        move(event.mouseMove.x - EventHandler::mousePosition.x, event.mouseMove.y - EventHandler::mousePosition.y);
-
-        return true;
-    }
-
-    return false;
 }
