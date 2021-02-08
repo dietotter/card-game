@@ -34,7 +34,7 @@ namespace nik {
     {
         if (isEmpty())
         {
-            throw std::underflow_error("Trying to take a card from an empty deck");
+            throw std::underflow_error("Trying to take a card from an empty hand");
         }
 
         Card card{ m_cardList[index] };

@@ -26,6 +26,7 @@ namespace nik {
 
         const GameObjectList& getObjectList() const { return m_objectList; }
         void addObject(std::unique_ptr<GameObject> gameObject) { m_objectList.push_back(std::move(gameObject)); }
+        void removeLastObject() { m_objectList.pop_back(); }
 
         bool handleEvent(const sf::Event &event);
 

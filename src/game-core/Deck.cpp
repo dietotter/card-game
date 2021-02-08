@@ -55,6 +55,11 @@ namespace nik {
         addedCard.faceUp = false;
     }
 
+    sf::FloatRect Deck::getBoundingBox() const
+    {
+        return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
+    }
+
     Deck& Deck::operator=(const Deck &deck)
     {
         if (this != &deck)
@@ -90,6 +95,25 @@ namespace nik {
             }
 
             ++counter;
+        }
+
+        return false;
+    }
+    
+    bool Deck::handleEvent(const sf::Event &event, Board &board)
+    {
+        bool handled{ GameObject::handleEvent(event, board) };
+
+        if (handled)
+        {
+            return true;
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::T && selected)
+        {
+            board.addObject(std::move(std::make_unique<Card>(takeTopCard())));
+
+            return true;
         }
 
         return false;
