@@ -35,7 +35,6 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Card.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Deck.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Game.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/GameObject.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
 )
 

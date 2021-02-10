@@ -5,12 +5,20 @@
 
 namespace nik {
 
-    int Hand::getReadjustedX()
+    int Hand::getReadjustedX() const
     {
-        return (cnst::screenWidth - size() * cnst::cardWidth) / 2;
+        // For hand area to be positioned correctly when there are no cards in it (size = 0),
+        // we need to recalculate the position of empty area like there is 1 card in Hand
+        std::size_t cardsToDraw{ size() };
+        if (!cardsToDraw)
+        {
+            cardsToDraw = 1;
+        }
+
+        return (cnst::screenWidth - cardsToDraw * cnst::cardWidth) / 2;
     }
 
-    int Hand::getReadjustedY()
+    int Hand::getReadjustedY() const
     {
         return cnst::screenHeight - cnst::cardHeight;
     }
@@ -23,6 +31,19 @@ namespace nik {
         {
             m_cardList[i].setPosition(getReadjustedX() + i * cnst::cardWidth, getReadjustedY());
         }
+    }
+    
+    sf::Vector2f Hand::getVisualSize() const
+    {
+        // For hand area to be visible when there are no cards in it (size = 0),
+        // we need to draw the empty area with the size of 1 card
+        std::size_t cardsToDraw{ size() };
+        if (!cardsToDraw)
+        {
+            cardsToDraw = 1;
+        }
+
+        return { static_cast<float>(cnst::cardWidth * cardsToDraw), cnst::cardHeight };
     }
 
     Hand::Hand()
@@ -57,7 +78,7 @@ namespace nik {
 
     sf::FloatRect Hand::getBoundingBox() const
     {
-        return { getPosition(), sf::Vector2f(cnst::cardWidth * size(), cnst::cardHeight) };
+        return { getPosition(), getVisualSize() };
     }
 
     bool Hand::contains(int x, int y) const
@@ -137,7 +158,7 @@ namespace nik {
     {
         states.transform *= getTransform();
 
-        sf::RectangleShape handRect{ sf::Vector2f(cnst::cardWidth * size(), cnst::cardHeight) };
+        sf::RectangleShape handRect{ getVisualSize() };
         target.draw(handRect, states);
 
         for (const auto &card : m_cardList)

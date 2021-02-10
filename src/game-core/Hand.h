@@ -14,9 +14,10 @@ namespace nik {
     private:
         std::vector<Card> m_cardList;
 
-        int getReadjustedX();
-        int getReadjustedY();
+        int getReadjustedX() const;
+        int getReadjustedY() const;
         void readjustPosition();
+        sf::Vector2f getVisualSize() const;
 
     public:
         Hand();
