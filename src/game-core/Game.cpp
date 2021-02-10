@@ -34,10 +34,7 @@ namespace nik {
     }
 
     void Game::initialize()
-    {
-        // // temporary dynamic casting, decks probably won't be copied like this
-        // objectList.push_back(std::make_unique<Deck>(*dynamic_cast<Deck*>(objectList[0].get())));
-        
+    {   
         auto &library{ setup::getLibrary() };
 
         Deck deck{ setup::loadDeckFromFile("data/deck1.dat") };

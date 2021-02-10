@@ -1,7 +1,5 @@
 #include "Scene.h"
 
-#include "core-globals.h"
-
 namespace nik {
 
     void Scene::commonInputUpdate()
@@ -18,9 +16,6 @@ namespace nik {
 
             // handle scene-specific input
             inputUpdate(event);
-
-            // update mouse position
-            glob::MouseTracker::getInstance().previousMousePosition = sf::Mouse::getPosition(m_window);
         }
     }
 

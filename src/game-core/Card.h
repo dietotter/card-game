@@ -21,6 +21,7 @@ namespace nik {
 
     public:
         bool faceUp{ true };
+        bool faceUpForOwner{ true }; // TODO not used until players are introduced
 
     public:
         Card(int id, const std::string &name, const std::string &description);
@@ -28,7 +29,6 @@ namespace nik {
         int getId() const { return m_id; }
         const std::string& getName() const { return m_name; }
         const std::string& getDescription() const { return m_description; }
-        sf::FloatRect getBoundingBox() const;
 
         void setFaceUpTexture(const sf::Texture &texture) { m_faceUpSprite.setTexture(texture); }
         void setFaceUpTextureRect(const sf::IntRect& rectangle) { m_faceUpSprite.setTextureRect(rectangle); }
@@ -37,7 +37,10 @@ namespace nik {
 
         void flip() { faceUp = !faceUp; }
 
+        virtual sf::FloatRect getBoundingBox() const override;
         virtual bool contains(int x, int y) const override;
+        virtual bool onSelect(const sf::Event &event, Board &board) override;
+        virtual bool onRelease(const sf::Event &event, Board &board) override;
         virtual bool handleEvent(const sf::Event &event, Board &board) override;
         
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

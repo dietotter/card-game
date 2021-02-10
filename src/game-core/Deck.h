@@ -28,11 +28,13 @@ namespace nik {
 
         std::size_t size() const { return m_cardList.size(); }
         bool isEmpty() const { return m_cardList.empty(); }
-        sf::FloatRect getBoundingBox() const;
 
         Deck& operator=(const Deck &deck);
         
+        virtual sf::FloatRect getBoundingBox() const override;
         virtual bool contains(int x, int y) const override;
+        virtual bool onSelect(const sf::Event &event, Board &board) override;
+        virtual bool onRelease(const sf::Event &event, Board &board) override;
         virtual bool handleEvent(const sf::Event &event, Board &board) override;
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

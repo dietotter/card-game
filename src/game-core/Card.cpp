@@ -1,6 +1,4 @@
 #include "Card.h"
-#include "Deck.h"
-#include "Hand.h"
 #include "../core-constants.h"
 
 namespace nik {
@@ -20,52 +18,33 @@ namespace nik {
         return getBoundingBox().contains(x, y);
     }
 
+    bool Card::onSelect(const sf::Event &event, Board &board)
+    {
+        selected = true;
+        return true;
+    }
+
+    bool Card::onRelease(const sf::Event &event, Board &board)
+    {
+        selected = false;
+        return true;
+    }
+
     bool Card::handleEvent(const sf::Event &event, Board &board)
     {
-        bool handled{ GameObject::handleEvent(event, board) };
-
-        if (handled)
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
         {
+            setPosition(
+                event.mouseMove.x - cnst::cardWidth / 2,
+                event.mouseMove.y - cnst::cardHeight / 2
+            );
+
             return true;
         }
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F && selected)
         {
             flip();
-            return true;
-        }
-
-        // TODO this thing is questionable
-        // 1. Does this card die (in memory) on board.removeLastObject() or what happens?
-        // 2. Maybe this is a bit clunky that we delete the card from the board inside this card's method.
-        // Could maybe use the collision system in the Board. This would require to move the getBoundingBox() method
-        // to GameObject (this probably should be done anyway) and check all the collisions of selected card on mouseButtonReleased
-        // 3. Could maybe introduce the version of flip(), which would only show the card for you, but not for the opponent
-        // (do this when Players are added)
-        if (event.type == sf::Event::MouseButtonReleased && contains(event.mouseButton.x, event.mouseButton.y))
-        {
-            auto &objectList{ board.getObjectList() };
-            for (auto it{ objectList.rbegin() }; it != objectList.rend(); ++it )
-            {
-                Deck *deck{ dynamic_cast<Deck*>((*it).get()) };
-
-                if (deck && deck->getBoundingBox().intersects(getBoundingBox()))
-                {
-                    deck->putCardOnTop(*this);
-                    board.removeLastObject();
-                    break;
-                }
-
-                Hand *hand{ dynamic_cast<Hand*>((*it).get()) };
-
-                if (hand && hand->getBoundingBox().intersects(getBoundingBox()))
-                {
-                    hand->putCardIn(*this);
-                    board.removeLastObject();
-                    break;
-                }
-            }
-
             return true;
         }
 

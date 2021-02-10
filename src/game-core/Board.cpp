@@ -1,4 +1,7 @@
 #include "Board.h"
+#include "Card.h"
+#include "Deck.h"
+#include "Hand.h"
 #include "../core-constants.h"
 
 #include <algorithm>
@@ -18,6 +21,11 @@ namespace nik {
             {
                 if ((*it)->contains(event.mouseButton.x, event.mouseButton.y))
                 {
+                    if (event.mouseButton.button == sf::Mouse::Button::Left)
+                    {
+                        (*it)->onSelect(event, *this);
+                    }
+
                     // move object to the front if it is clicked on
                     std::rotate(it, it + 1, m_objectList.end());
                     break;
@@ -27,7 +35,33 @@ namespace nik {
 
         for (auto it{ m_objectList.rbegin() }; it != m_objectList.rend(); ++it )
         {
-            bool handled{ (*it)->handleEvent(event, *this) };
+            bool handled{ false };
+
+            if (
+                event.type == sf::Event::MouseButtonReleased
+                && event.mouseButton.button == sf::Mouse::Button::Left
+                && (*it)->selected
+            )
+            {
+                Card *card{ dynamic_cast<Card*>((*it).get()) };
+
+                (*it)->onRelease(event, *this);
+
+                if (card)
+                {   
+                    // because "it" is a reverse_iterator,
+                    // we need to convert it to just iterator (for vector::erase in handleCardDrop)
+                    bool cardMovedFromBoard{ handleCardDrop((it).base() - 1) };
+                    if (cardMovedFromBoard)
+                    {
+                        // we don't make the card handle the event,
+                        // because iterator pointing to it is removed from the board's list
+                        continue;
+                    }
+                }
+            }
+
+            handled = (*it)->handleEvent(event, *this);
 
             if (handled)
             {
@@ -46,6 +80,35 @@ namespace nik {
         {
             target.draw(*gameObject);
         }
+    }
+
+    // if Card has been dropped over some container (deck, hand), move it there
+    bool Board::handleCardDrop(GameObjectList::iterator cardIt)
+    {
+        Card *card{ dynamic_cast<Card*>((*cardIt).get()) };
+
+        for (auto it{ m_objectList.rbegin() }; it != m_objectList.rend(); ++it )
+        {
+            Deck *deck{ dynamic_cast<Deck*>((*it).get()) };
+
+            if (deck && deck->getBoundingBox().intersects(card->getBoundingBox()))
+            {
+                deck->putCardOnTop(*card);
+                m_objectList.erase(cardIt);
+                return true;
+            }
+
+            Hand *hand{ dynamic_cast<Hand*>((*it).get()) };
+
+            if (hand && hand->getBoundingBox().intersects(card->getBoundingBox()))
+            {
+                hand->putCardIn(*card);
+                m_objectList.erase(cardIt);
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

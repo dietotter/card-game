@@ -40,7 +40,6 @@ namespace nik {
         m_cardList.push_back(card);
         Card &addedCard{ m_cardList.back() };
 
-        addedCard.setOrigin(getPosition());
         addedCard.setPosition(0, 0);
         addedCard.faceUp = false;
     }
@@ -50,14 +49,8 @@ namespace nik {
         m_cardList.insert(m_cardList.begin(), card);
         Card &addedCard{ m_cardList.front() };
 
-        addedCard.setOrigin(getPosition());
         addedCard.setPosition(0, 0);
         addedCard.faceUp = false;
-    }
-
-    sf::FloatRect Deck::getBoundingBox() const
-    {
-        return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
     }
 
     Deck& Deck::operator=(const Deck &deck)
@@ -68,6 +61,11 @@ namespace nik {
         }
 
         return *this;
+    }
+
+    sf::FloatRect Deck::getBoundingBox() const
+    {
+        return { getPosition(), sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
     }
 
     bool Deck::contains(int x, int y) const
@@ -99,19 +97,36 @@ namespace nik {
 
         return false;
     }
+
+    bool Deck::onSelect(const sf::Event &event, Board &board)
+    {
+        selected = true;
+        return true;
+    }
+
+    bool Deck::onRelease(const sf::Event &event, Board &board)
+    {
+        selected = false;
+        return true;
+    }
     
     bool Deck::handleEvent(const sf::Event &event, Board &board)
     {
-        bool handled{ GameObject::handleEvent(event, board) };
-
-        if (handled)
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
         {
+            setPosition(
+                event.mouseMove.x - cnst::cardWidth / 2,
+                event.mouseMove.y - cnst::cardHeight / 2
+            );
+
             return true;
         }
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::T && selected)
         {
-            board.addObject(std::move(std::make_unique<Card>(takeTopCard())));
+            Card card{ takeTopCard() };
+            card.setPosition(getPosition());
+            board.addObject(std::make_unique<Card>(card));
 
             return true;
         }

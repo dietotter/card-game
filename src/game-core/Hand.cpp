@@ -55,6 +55,11 @@ namespace nik {
         addedCard.faceUp = true;
     }
 
+    sf::FloatRect Hand::getBoundingBox() const
+    {
+        return { getPosition(), sf::Vector2f(cnst::cardWidth * size(), cnst::cardHeight) };
+    }
+
     bool Hand::contains(int x, int y) const
     {
         for (const auto &card : m_cardList)
@@ -66,6 +71,32 @@ namespace nik {
         }
 
         return false;
+    }
+
+    bool Hand::onSelect(const sf::Event &event, Board &board)
+    {
+        selected = true;
+        for (auto &card : m_cardList)
+        {
+            if (card.contains(event.mouseButton.x, event.mouseButton.y))
+            {
+                card.selected = true;
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    bool Hand::onRelease(const sf::Event &event, Board &board)
+    {
+        selected = false;
+        for (auto &card : m_cardList)
+        {
+            card.selected = false;
+        }
+
+        return true;
     }
 
     bool Hand::handleEvent(const sf::Event &event, Board &board)
@@ -100,11 +131,6 @@ namespace nik {
         }
 
         return false;
-    }
-
-    sf::FloatRect Hand::getBoundingBox() const
-    {
-        return { getPosition(), sf::Vector2f(cnst::cardWidth * size(), cnst::cardHeight) };
     }
 
     void Hand::draw(sf::RenderTarget &target, sf::RenderStates states) const
