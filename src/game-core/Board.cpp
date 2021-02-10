@@ -1,8 +1,10 @@
 #include "Board.h"
 #include "Card.h"
 #include "Deck.h"
+#include "Die.h"
 #include "Hand.h"
 #include "../core-constants.h"
+#include "../setup.h"
 
 #include <algorithm>
 
@@ -14,6 +16,12 @@ namespace nik {
 
     bool Board::handleEvent(const sf::Event &event)
     {
+        // spawn a die
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D && event.key.shift == true)
+        {
+            spawnDie();
+        }
+
         if (event.type == sf::Event::MouseButtonPressed)
         {
             // not using reverse iterator because of the std::rotate
@@ -58,6 +66,22 @@ namespace nik {
                         // because iterator pointing to it is removed from the board's list
                         continue;
                     }
+                }
+            }
+            
+            // delete a die
+            if (
+                event.type == sf::Event::KeyPressed
+                && event.key.code == sf::Keyboard::D
+                && (*it)->selected
+            )
+            {
+                Die *die{ dynamic_cast<Die*>((*it).get()) };
+
+                if (die)
+                {
+                    m_objectList.erase((it).base() - 1);
+                    continue;
                 }
             }
 
@@ -109,6 +133,15 @@ namespace nik {
         }
 
         return false;
+    }
+
+    void Board::spawnDie()
+    {
+        auto die{ std::make_unique<Die>() };
+        sf::Vector2f mousePos{ sf::Mouse::getPosition() };
+        // die->setPosition(mousePos.x, mousePos.y); // TODO doesn't work, dunno why yet
+
+        m_objectList.push_back(std::move(die));
     }
 
 }

@@ -22,6 +22,7 @@ namespace nik {
         sf::Color m_backgroundColor;
 
         bool handleCardDrop(GameObjectList::iterator cardIt);
+        void spawnDie(); // maybe such thing should be handled in Game
 
     public:
         Board();

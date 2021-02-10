@@ -15,6 +15,16 @@ namespace nik::setup {
         std::vector<Card> p_library;
         sf::Texture p_cardTexture;
         sf::Texture p_cardBackTexture;
+        sf::Texture p_dieTexture;
+        sf::Font p_globalFont;
+
+        void setupFont()
+        {
+            if (!p_globalFont.loadFromFile("fonts/cour.ttf"))
+            {   
+                throw std::runtime_error("Font Courier New couldn't be loaded");
+            }
+        }
 
         void loadLibraryFromFile()
         {
@@ -71,16 +81,9 @@ namespace nik::setup {
 
         void createCardTexture()
         {
-            // TODO move loading font to separate setup function (maybe even separate setup manager)
-            sf::Font font;
-            if (!font.loadFromFile("fonts/cour.ttf"))
-            {   
-                throw std::runtime_error("Font Courier New couldn't be loaded");
-            }
-
             // Create card text to be drawn (used for both name and description)
             sf::Text cardText;
-            cardText.setFont(font);
+            cardText.setFont(p_globalFont);
             cardText.setFillColor(sf::Color(cnst::cardTextColor));
 
             // Load card images and set up sprite for drawing corresponding image onto each card
@@ -163,16 +166,48 @@ namespace nik::setup {
             }
         }
 
+        void createDieTexture()
+        {
+            // Create texture for all the dice to use
+            sf::RenderTexture dieRenderTexture;
+            if (!dieRenderTexture.create(cnst::dieWidth * 6, cnst::dieWidth))
+            {
+                throw std::runtime_error("Die render texture couldn't be created");
+            }
+
+            dieRenderTexture.clear(sf::Color(cnst::dieBackgroundColor));
+
+            // Dice dots size and color
+            sf::Text dieNumber;
+            dieNumber.setFont(p_globalFont);
+            dieNumber.setCharacterSize(cnst::dieWidth);
+            dieNumber.setStyle(sf::Text::Bold);
+            dieNumber.setFillColor(sf::Color(cnst::dieNumberColor));
+
+            for (int i{ 0 }; i < 6; ++i)
+            {
+                dieNumber.setString(std::to_string(i + 1));
+                dieNumber.setPosition(cnst::dieWidth * i + cnst::dieNumberOffset, -cnst::dieNumberOffset);
+
+                dieRenderTexture.draw(dieNumber);
+            }
+
+            dieRenderTexture.display();
+            p_dieTexture = dieRenderTexture.getTexture();
+        }
+
     }
 
     bool initialize()
     {
         try
         {
+            setupFont();
             loadLibraryFromFile();
             createCardTexture();
             createCardBackTexture();
             assignCardTextures();
+            createDieTexture();
         }
         catch (const std::exception &e)
         {
@@ -184,6 +219,8 @@ namespace nik::setup {
     }
 
     const std::vector<Card>& getLibrary() { return p_library; }
+    const sf::Texture& getDieTexture() { return p_dieTexture; }
+    const sf::Font& getGlobalFont() { return p_globalFont; }
 
     Deck loadDeckFromFile(const std::string &filename)
     {

@@ -13,6 +13,8 @@ namespace nik::setup
     bool initialize();
 
     const std::vector<Card>& getLibrary();
+    const sf::Texture& getDieTexture();
+    const sf::Font& getGlobalFont();
 
     Deck loadDeckFromFile(const std::string &filename);
 }

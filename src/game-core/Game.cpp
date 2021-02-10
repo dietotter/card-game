@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Card.h"
 #include "Deck.h"
+#include "Die.h"
 #include "Hand.h"
 #include "../setup.h"
 
@@ -43,8 +44,8 @@ namespace nik {
         board.addObject(std::move(deckPtr1));
         board.addObject(std::move(deckPtr2));
 
-        board.addObject(std::move(std::make_unique<Card>(library[0])));
-        board.addObject(std::move(std::make_unique<Card>(library[1])));
+        board.addObject(std::make_unique<Card>(library[0]));
+        board.addObject(std::make_unique<Card>(library[1]));
 
         auto handPtr{ std::make_unique<Hand>() };
         handPtr->putCardIn(library[0]);
@@ -53,6 +54,9 @@ namespace nik {
         handPtr->putCardIn(library[2]);
 
         board.addObject(std::move(handPtr));
+
+        board.addObject(std::make_unique<Die>());
+        board.addObject(std::make_unique<Die>(3));
     }
     
 }

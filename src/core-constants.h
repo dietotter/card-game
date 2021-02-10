@@ -25,4 +25,10 @@ namespace nik::cnst {
     inline constexpr int cardDescriptionYOffset{ cardImageYOffset + cardImageHeight + cardNameYOffset };
     
     inline constexpr unsigned int boardBackgroundColor{ 0x3D4849FF };
+
+    // dice info
+    inline constexpr int dieWidth{ 50 };
+    inline constexpr int dieNumberOffset{ dieWidth / 5 };
+    inline constexpr unsigned int dieNumberColor{ 0x333333FF };
+    inline constexpr unsigned int dieBackgroundColor{ 0xFFFFDDFF };
 }
