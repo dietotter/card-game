@@ -17,10 +17,7 @@ namespace nik {
 
     public:
         Area();
-        Area(int x, int y, float width, float height);
-        Area(int x, int y, int widthPercent, int heightPercent, float parentWidth, float parentHeight);
-        Area(int x, int y, int widthPercent, float height, float parentWidth);
-        Area(int x, int y, float width, int heightPercent, float parentHeight);
+        Area(int x, int y, float width = 0, float height = 0);
         Area(const Area &area);
 
         virtual void setColor(const sf::Color &color) override;

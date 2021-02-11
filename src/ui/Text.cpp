@@ -4,7 +4,7 @@
 
 namespace nik {
 
-    void Text::setFont()
+    void Text::initializeFont()
     {
         m_text.setFont(setup::getGlobalFont());
     }
@@ -20,13 +20,13 @@ namespace nik {
 
     Text::Text()
     {
-        setFont();
+        initializeFont();
     }
 
     Text::Text(const std::string &string)
     {
         m_text.setString(string);
-        setFont();
+        initializeFont();
     }
 
     Text::Text(int x, int y, const std::string &string, int characterSize)
@@ -34,7 +34,7 @@ namespace nik {
     {
         m_text.setString(string);
         m_text.setCharacterSize(characterSize);
-        setFont();
+        initializeFont();
     }
 
     Text::Text(const Text &text)

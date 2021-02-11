@@ -50,30 +50,9 @@ namespace nik {
         adjustChildrenSize();
     }
 
-    UIElement::UIElement(int x, int y, int widthPercent, int heightPercent, float parentWidth, float parentHeight)
-        : m_widthPercent{ widthPercent }, m_heightPercent{ heightPercent }
-    {
-        adjustSize(parentWidth, parentHeight);
-        setPosition(x, y);
-    }
-
     UIElement::UIElement(int x, int y, float width, float height)
         : m_width{ width }, m_height{ height }
     {
-        setPosition(x, y);
-    }
-
-    UIElement::UIElement(int x, int y, int widthPercent, float height, float parentWidth)
-        : m_widthPercent{ widthPercent }, m_height{ height }
-    {
-        adjustWidth(parentWidth);
-        setPosition(x, y);
-    }
-
-    UIElement::UIElement(int x, int y, float width, int heightPercent, float parentHeight)
-        : m_width{ width }, m_heightPercent{ heightPercent }
-    {
-        adjustHeight(parentHeight);
         setPosition(x, y);
     }
 
@@ -98,6 +77,7 @@ namespace nik {
         m_widthPercent = 0;
         m_width = width;
 
+        adjustDrawingSize();
         adjustChildrenSize();
     }
 
@@ -107,6 +87,7 @@ namespace nik {
         m_heightPercent = 0;
         m_height = height;
 
+        adjustDrawingSize();
         adjustChildrenSize();
     }
 
@@ -148,6 +129,15 @@ namespace nik {
     
     bool UIElement::handleEvent(const sf::Event &event)
     {
+        for (const auto &child : m_childrenList)
+        {
+            bool handled{ child->handleEvent(event) };
+            if (handled)
+            {
+                return true;
+            }
+        }
+
         if (event.type == sf::Event::MouseButtonPressed && contains(event.mouseButton.x, event.mouseButton.y))
         {
             return onClick(event);

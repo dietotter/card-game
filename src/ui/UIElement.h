@@ -33,9 +33,6 @@ namespace nik {
 
     public:
         UIElement(int x = 0, int y = 0, float width = 0, float height = 0);
-        UIElement(int x, int y, int widthPercent, int heightPercent, float parentWidth, float parentHeight);
-        UIElement(int x, int y, int widthPercent, float height, float parentWidth);
-        UIElement(int x, int y, float width, int heightPercent, float parentHeight);
         UIElement(const UIElement &element);
         
         virtual ~UIElement() {}

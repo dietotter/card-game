@@ -15,27 +15,6 @@ namespace nik {
         setColor(sf::Color{ 0 });
         adjustDrawingSize();
     }
-            
-    Area::Area(int x, int y, int widthPercent, int heightPercent, float parentWidth, float parentHeight)
-        : UIElement{ x, y, widthPercent, heightPercent, parentWidth, parentHeight }
-    {
-        setColor(sf::Color{ 0 });
-        adjustDrawingSize();
-    }
-
-    Area::Area(int x, int y, int widthPercent, float height, float parentWidth)
-            : UIElement{ x, y, widthPercent, height, parentWidth }
-    {
-        setColor(sf::Color{ 0 });
-        adjustDrawingSize();
-    }
-    
-    Area::Area(int x, int y, float width, int heightPercent, float parentHeight)
-            : UIElement{ x, y, width, heightPercent, parentHeight }
-    {
-        setColor(sf::Color{ 0 });
-        adjustDrawingSize();
-    }
     
     Area::Area(const Area &area)
             : UIElement(area)

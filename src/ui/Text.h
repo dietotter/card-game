@@ -12,7 +12,7 @@ namespace nik {
     private:
         sf::Text m_text;
 
-        void setFont();
+        void initializeFont();
 
     protected:
         virtual void adjustDrawingSize() override;
