@@ -94,7 +94,7 @@ namespace nik {
     {
         target.clear(m_backgroundColor);
 
-        for (auto &gameObject : m_objectList)
+        for (const auto &gameObject : m_objectList)
         {
             target.draw(*gameObject);
         }

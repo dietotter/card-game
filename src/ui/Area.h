@@ -12,10 +12,10 @@ namespace nik {
         sf::RectangleShape m_rect;
 
     protected:
+        virtual void adjustDrawingSize() override;
         virtual std::unique_ptr<UIElement> clone() const override;
 
     public:
-        // constructors
         Area();
         Area(int x, int y, float width, float height);
         Area(int x, int y, int widthPercent, int heightPercent, float parentWidth, float parentHeight);
@@ -23,11 +23,7 @@ namespace nik {
         Area(int x, int y, float width, int heightPercent, float parentHeight);
         Area(const Area &area);
 
-        void setColor(const sf::Color &color);
-
-        virtual void adjustDrawingSize() override;
-
-        // draw function
+        virtual void setColor(const sf::Color &color) override;
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     };
 

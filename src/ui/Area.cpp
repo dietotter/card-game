@@ -56,6 +56,11 @@ namespace nik {
     {
         states.transform *= getTransform();
 
-        target.draw(m_rect);
+        target.draw(m_rect, states);
+
+        for (const auto &element : m_childrenList)
+        {
+            target.draw(*element, states);
+        }
     }
 }

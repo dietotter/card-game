@@ -39,6 +39,7 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Area.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/MenuScene.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Text.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/UIElement.cpp
 )
 

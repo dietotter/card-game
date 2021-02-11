@@ -59,6 +59,7 @@ namespace nik {
         void setHeightPercent(int percent, float parentHeight);
         void setPercentSize(int widthPercent, int heightPercent, float parentWidth, float parentHeight);
 
+        virtual void setColor(const sf::Color &color) = 0;
         virtual sf::FloatRect getBoundingBox() const;
         virtual bool contains(int x, int y) const;
         virtual bool handleEvent(const sf::Event &event);

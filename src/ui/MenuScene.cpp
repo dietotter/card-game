@@ -1,4 +1,5 @@
 #include "MenuScene.h"
+#include "Text.h"
 
 namespace nik {
 
@@ -21,6 +22,10 @@ namespace nik {
             this->m_canvas.setColor(sf::Color(event.mouseButton.x * event.mouseButton.y));
             return true;
         };
+        
+        auto text{ std::make_unique<Text>(300, 300, "Test", 120) };
+        text->setColor(sf::Color::Magenta);
+        m_canvas.addChild(std::move(text));
     }
 
 }
