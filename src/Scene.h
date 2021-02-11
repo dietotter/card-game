@@ -21,6 +21,8 @@ namespace nik {
         Scene(sf::RenderWindow &window): m_window{ window } {}
 
         virtual ~Scene() {}
+
+        virtual void initialize() = 0;
         
         void update()
         {

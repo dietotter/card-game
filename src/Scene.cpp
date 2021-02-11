@@ -14,6 +14,14 @@ namespace nik {
                 m_window.close();
             }
 
+            // maybe this shouldn't be in menu scenes
+            if (event.type == sf::Event::Resized)
+            {
+                // update the view to the new size of the window
+                sf::FloatRect visibleArea(0.f, 0.f, event.size.width, event.size.height);
+                m_window.setView(sf::View(visibleArea));
+            }
+
             // handle scene-specific input
             inputUpdate(event);
         }

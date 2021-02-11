@@ -2,6 +2,8 @@
 
 #include "core-constants.h"
 #include "game-core/Game.h"
+#include "ui/MenuScene.h"
+#include "SceneManager.h"
 #include "setup.h"
 
 #include <SFML/Graphics.hpp>
@@ -21,8 +23,10 @@ namespace nik {
 
         sf::RenderWindow window(sf::VideoMode(cnst::screenWidth, cnst::screenHeight), "My window");
 
-        Game gameScene{ window };
-        gameScene.initialize();
+        MenuScene menuScene{ window };
+        menuScene.initialize();
+        // Game gameScene{ window };
+        // gameScene.initialize();
 
         // run the program as long as the window is open
         while (window.isOpen())
@@ -31,7 +35,7 @@ namespace nik {
             // handle events based on the scene, do the logic update based on the scene)
             // In future (maybe it'll be done in Game class), it will be also receiving socket updates for multiplayer
             // (probably in a separate thread)
-            gameScene.update();
+            menuScene.update();
         }
 
         return 0;
