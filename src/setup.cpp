@@ -170,7 +170,7 @@ namespace nik::setup {
         {
             // Create texture for all the dice to use
             sf::RenderTexture dieRenderTexture;
-            if (!dieRenderTexture.create(cnst::dieWidth * 6, cnst::dieWidth))
+            if (!dieRenderTexture.create(cnst::dieWidth * 12, cnst::dieWidth))
             {
                 throw std::runtime_error("Die render texture couldn't be created");
             }
@@ -190,6 +190,23 @@ namespace nik::setup {
                 dieNumber.setPosition(cnst::dieWidth * i + cnst::dieNumberOffset, -cnst::dieNumberOffset);
 
                 dieRenderTexture.draw(dieNumber);
+            }
+
+            sf::Text rolledDiceSymbol;
+            rolledDiceSymbol.setString("R");
+            rolledDiceSymbol.setFont(p_globalFont);
+            rolledDiceSymbol.setCharacterSize(cnst::dieWidth / 2);
+            rolledDiceSymbol.setStyle(sf::Text::Bold);
+            rolledDiceSymbol.setFillColor(sf::Color(cnst::dieNumberColor));
+            // values from 6 to 11 are for rolled (randomized) dice
+            for (int i{ 6 }; i < 12; ++i)
+            {
+                dieNumber.setString(std::to_string(i - 5));
+                dieNumber.setPosition(cnst::dieWidth * i + cnst::dieNumberOffset / 2, -cnst::dieNumberOffset);
+                rolledDiceSymbol.setPosition(cnst::dieWidth * i + cnst::dieWidth / 2 + cnst::dieNumberOffset / 2, cnst::dieNumberOffset * 2);
+
+                dieRenderTexture.draw(dieNumber);
+                dieRenderTexture.draw(rolledDiceSymbol);
             }
 
             dieRenderTexture.display();

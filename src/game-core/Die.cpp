@@ -95,7 +95,9 @@ namespace nik {
 
     int Die::roll()
     {
-        static std::uniform_int_distribution dieRoll{ 1, 6 };
+        // values from 7 to 12 mean that on texture usual values of 1 to 6 will be visible,
+        // but with a little "R" inside to indicate that it was randomized
+        static std::uniform_int_distribution dieRoll{ 7, 12 };
 
         m_value = dieRoll(glob::mt);
 

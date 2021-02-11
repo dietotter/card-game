@@ -22,7 +22,6 @@ namespace nik {
         sf::Color m_backgroundColor;
 
         bool handleCardDrop(GameObjectList::iterator cardIt);
-        void spawnDie(); // maybe such thing should be handled in Game
 
     public:
         Board();
@@ -31,6 +30,7 @@ namespace nik {
         void addObject(std::unique_ptr<GameObject> gameObject) { m_objectList.push_back(std::move(gameObject)); }
 
         bool handleEvent(const sf::Event &event);
+        void spawnDie(const sf::Vector2i &mousePos);
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     };

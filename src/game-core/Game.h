@@ -17,7 +17,7 @@ namespace nik {
     class Game : public Scene
     {
     private:
-        Board board;
+        Board m_board;
 
         bool handleUIInput(const sf::Event &event);
         bool handleGameInput(const sf::Event &event);

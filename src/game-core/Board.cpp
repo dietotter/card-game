@@ -16,12 +16,6 @@ namespace nik {
 
     bool Board::handleEvent(const sf::Event &event)
     {
-        // spawn a die
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::D && event.key.shift == true)
-        {
-            spawnDie();
-        }
-
         if (event.type == sf::Event::MouseButtonPressed)
         {
             // not using reverse iterator because of the std::rotate
@@ -135,11 +129,10 @@ namespace nik {
         return false;
     }
 
-    void Board::spawnDie()
+    void Board::spawnDie(const sf::Vector2i &mousePos)
     {
         auto die{ std::make_unique<Die>() };
-        sf::Vector2f mousePos{ sf::Mouse::getPosition() };
-        // die->setPosition(mousePos.x, mousePos.y); // TODO doesn't work, dunno why yet
+        die->setPosition(mousePos.x, mousePos.y);
 
         m_objectList.push_back(std::move(die));
     }
