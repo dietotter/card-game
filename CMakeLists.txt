@@ -30,12 +30,13 @@ target_link_libraries(Nikcraft sfml-graphics sfml-audio)
 target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Scene.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/SceneManager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/setup.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Board.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Card.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Deck.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Die.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Game.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/GameScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Area.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Button.cpp

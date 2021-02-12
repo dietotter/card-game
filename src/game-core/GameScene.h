@@ -14,7 +14,7 @@ namespace nik {
     // maybe Game will have some state of the game, which will be passed to the Board to act accordingly
     // extends Scene
 
-    class Game : public Scene
+    class GameScene : public Scene
     {
     private:
         Board m_board;
@@ -27,11 +27,12 @@ namespace nik {
         virtual void graphicsUpdate() override;
 
     public:
-        Game(sf::RenderWindow &window): Scene{ window }
+        GameScene(sf::RenderWindow &window): Scene{ window }
         {
         }
 
         virtual void initialize() override;
+        virtual std::unique_ptr<Scene> clone() const override;
     };
 
 }

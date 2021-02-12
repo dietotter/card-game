@@ -1,8 +1,6 @@
 #pragma once
 
 #include "core-constants.h"
-#include "game-core/Game.h"
-#include "ui/MenuScene.h"
 #include "SceneManager.h"
 #include "setup.h"
 
@@ -23,19 +21,14 @@ namespace nik {
 
         sf::RenderWindow window(sf::VideoMode(cnst::screenWidth, cnst::screenHeight), "My window");
 
-        MenuScene menuScene{ window };
-        menuScene.initialize();
-        // Game gameScene{ window };
-        // gameScene.initialize();
+        SceneManager sceneManager{ window };
 
         // run the program as long as the window is open
         while (window.isOpen())
         {
-            // sceneHandler.update (this will draw either menu or game board or deckbuilder depending on the scene,
-            // handle events based on the scene, do the logic update based on the scene)
             // In future (maybe it'll be done in Game class), it will be also receiving socket updates for multiplayer
             // (probably in a separate thread)
-            menuScene.update();
+            sceneManager.update();
         }
 
         return 0;

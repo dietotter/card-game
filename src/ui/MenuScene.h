@@ -22,6 +22,7 @@ namespace nik {
         }
 
         virtual void initialize() override;
+        virtual std::unique_ptr<Scene> clone() const override;
     };
 
 }

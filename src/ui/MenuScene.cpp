@@ -6,6 +6,13 @@ namespace nik {
 
     void MenuScene::inputUpdate(const sf::Event &event)
     {
+        if (event.type == sf::Event::Resized)
+        {
+            // update the canvas size to the new size of the window (set in Scene class)
+            sf::Vector2f windowSize{ m_window.getSize() };
+            m_canvas.setPercentSize(m_canvas.getWidthPercent(), m_canvas.getHeightPercent(), windowSize.x, windowSize.y);
+        }
+
         m_canvas.handleEvent(event);
     }
 
@@ -59,6 +66,11 @@ namespace nik {
 
         m_canvas.addChild(std::move(startButton));
         m_canvas.addChild(std::move(quitButton));
+    }
+
+    std::unique_ptr<Scene> MenuScene::clone() const
+    {
+        return std::make_unique<MenuScene>(*this);
     }
 
 }
