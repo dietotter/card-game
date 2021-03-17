@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <memory>
+
 namespace nik {
 
     class Board;
@@ -22,6 +24,8 @@ namespace nik {
         virtual bool onSelect(const sf::Event &event, Board &board) = 0;
         virtual bool onRelease(const sf::Event &event, Board &board) = 0;
         virtual bool handleEvent(const sf::Event &event, Board &board) = 0;
+
+        virtual std::unique_ptr<GameObject> clone() const = 0;
     };
 
 }

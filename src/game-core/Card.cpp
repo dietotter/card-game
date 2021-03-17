@@ -65,4 +65,9 @@ namespace nik {
         }
     }
 
+    std::unique_ptr<GameObject> Card::clone() const
+    {
+        return std::make_unique<Card>(*this);
+    }
+
 }

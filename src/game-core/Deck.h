@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <vector>
+#include <memory>
 
 namespace nik {
 
@@ -38,6 +39,8 @@ namespace nik {
         virtual bool handleEvent(const sf::Event &event, Board &board) override;
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+        virtual std::unique_ptr<GameObject> clone() const override;
     };
 
 }

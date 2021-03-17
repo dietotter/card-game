@@ -159,4 +159,9 @@ namespace nik {
         }
     }
 
+    std::unique_ptr<GameObject> Deck::clone() const
+    {
+        return std::make_unique<Deck>(*this);
+    }
+
 }

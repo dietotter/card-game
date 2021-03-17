@@ -113,5 +113,10 @@ namespace nik {
             cnst::dieWidth
         ));
     }
+
+    std::unique_ptr<GameObject> Die::clone() const
+    {
+        return std::make_unique<Die>(*this);
+    }
     
 }

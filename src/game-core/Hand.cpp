@@ -167,4 +167,9 @@ namespace nik {
         }
     }
 
+    std::unique_ptr<GameObject> Hand::clone() const
+    {
+        return std::make_unique<Hand>(*this);
+    }
+
 }

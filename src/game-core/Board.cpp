@@ -14,6 +14,11 @@ namespace nik {
     {
     }
 
+    Board::Board(const Board &board)
+    {
+        deepCopy(board);
+    }
+
     bool Board::handleEvent(const sf::Event &event)
     {
         if (event.type == sf::Event::MouseButtonPressed)
@@ -135,6 +140,27 @@ namespace nik {
         die->setPosition(mousePos.x, mousePos.y);
 
         m_objectList.push_back(std::move(die));
+    }
+
+    void Board::deepCopy(const Board &board)
+    {
+        m_backgroundColor = board.m_backgroundColor;
+
+        m_objectList.resize(board.m_objectList.size());
+        for (int i{ 0 }; i < m_objectList.size(); ++i)
+        {
+            m_objectList[i] = board.m_objectList[i]->clone();
+        }
+    }
+
+    Board& Board::operator=(const Board &board)
+    {
+        if (&board != this)
+        {
+            deepCopy(board);
+        }
+
+        return *this;
     }
 
 }

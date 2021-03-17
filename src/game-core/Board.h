@@ -21,10 +21,12 @@ namespace nik {
 
         sf::Color m_backgroundColor;
 
+        void deepCopy(const Board &board);
         bool handleCardDrop(GameObjectList::iterator cardIt);
 
     public:
         Board();
+        Board(const Board &board);
 
         const GameObjectList& getObjectList() const { return m_objectList; }
         void addObject(std::unique_ptr<GameObject> gameObject) { m_objectList.push_back(std::move(gameObject)); }
@@ -33,6 +35,8 @@ namespace nik {
         void spawnDie(const sf::Vector2i &mousePos);
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+        Board& operator=(const Board &board);
     };
 
 }
