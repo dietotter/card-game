@@ -8,3 +8,6 @@
 # Build
 build/
 lib-build/
+
+# CLion build
+cmake-build-debug/

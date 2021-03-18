@@ -17,7 +17,7 @@ namespace nik {
         virtual void graphicsUpdate() override;
 
     public:
-        MenuScene(sf::RenderWindow &window): Scene{ window }
+        MenuScene(sf::RenderWindow &window, Scene::ChangeSceneFunction changeScene): Scene{ window, changeScene }
         {
         }
 
