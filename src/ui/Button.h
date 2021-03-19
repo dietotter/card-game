@@ -33,6 +33,7 @@ namespace nik {
         void setCharacterSize(int characterSize);
         void setTextColor(const sf::Color &color);
         void setTextPressedColor(const sf::Color &color);
+        void setTextStyle(sf::Uint32 style);
         
         void setOutlineColor(const sf::Color &color);
         void setOutlineThickness(float thickness);

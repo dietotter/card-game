@@ -26,6 +26,7 @@ namespace nik {
             return true;
         };
         closeButton->setTextString("x");
+        closeButton->setTextStyle(sf::Text::Bold);
         closeButton->setCharacterSize(40);
         closeButton->setTextColor(sf::Color::White);
         closeButton->setTextPressedColor(sf::Color(200, 200, 200, 255));

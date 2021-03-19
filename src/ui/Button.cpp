@@ -63,6 +63,11 @@ namespace nik {
     {
         m_pressedTextColor = color;
     }
+
+    void Button::setTextStyle(sf::Uint32 style)
+    {
+        m_buttonText.setStyle(style);
+    }
         
     void Button::setOutlineColor(const sf::Color &color)
     {
@@ -101,7 +106,7 @@ namespace nik {
         {
             return false;
         }
-        
+
         for (const auto &child : m_childrenList)
         {
             bool handled{ child->handleEvent(event) };
