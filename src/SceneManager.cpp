@@ -4,18 +4,9 @@ namespace nik {
 
     SceneManager::SceneManager(sf::RenderWindow &window)
     {
-        Scene::ChangeSceneFunction changeScene{ getChangeSceneFunction(*this) };
-        // these 2 lines currently invoke the "reference to non-static member function must be called" error
-        // (https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
-        // also, some interesting read found on that page:
-        // https://isocpp.org/wiki/faq/pointers-to-members#fnptr-vs-memfnptr-types
-        // 2 ways to fix i thought of right now:
-        // 1. make SceneManager static
-        // 2. make setCurrentScene (rename this if going this way) take in SceneManager& argument and return
-        // a function, which takes in sceneName argument and changes the scene. Then, call the setCurrentScene
-        // in these two lines with *this in parameters
-        m_sceneMap.insert({"Menu", std::make_unique<MenuScene>(window, changeScene)});
-        m_sceneMap.insert({"Game", std::make_unique<GameScene>(window, changeScene)});
+        Scene::RequestSceneFunction requestSceneChange{ getRequestSceneChangeFunction(*this) };
+        m_sceneMap.insert({"Menu", std::make_unique<MenuScene>(window, requestSceneChange)});
+        m_sceneMap.insert({"Game", std::make_unique<GameScene>(window, requestSceneChange)});
         setCurrentScene("Menu");
     }
 
@@ -30,15 +21,24 @@ namespace nik {
         m_currentScene->initialize();
     }
 
-    Scene::ChangeSceneFunction SceneManager::getChangeSceneFunction(SceneManager &sceneManager)
+    Scene::RequestSceneFunction SceneManager::getRequestSceneChangeFunction(SceneManager &sceneManager)
     {
         return [&sceneManager](const std::string &sceneName) {
-            sceneManager.setCurrentScene(sceneName);
+            // not making the scene change itself here, because that would be in the middle of previous scene's
+            // input handle. So because the previous scene would be destroyed with the scene change,
+            // it would crash the program
+            sceneManager.m_requestedScene = sceneName;
         };
     }
 
     void SceneManager::update()
     {
+        if (!m_requestedScene.empty())
+        {
+            setCurrentScene(m_requestedScene);
+            m_requestedScene.clear();
+        }
+
         m_currentScene->update();
     }
 

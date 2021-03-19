@@ -10,22 +10,24 @@ namespace nik {
     class Scene
     {
     public:
-        using ChangeSceneFunction = std::function<void(const std::string&)>;
+        using RequestSceneFunction = std::function<void(const std::string&)>;
         
     private:
+        std::string m_name{};
+
         void commonInputUpdate();
         void commonGraphicsUpdate();
 
     protected:
         // TODO maybe this should be in SceneManager, which just calls Scene.update(sf::RenderWindow &window)
         sf::RenderWindow &m_window;
-        ChangeSceneFunction m_changeScene;
+        RequestSceneFunction m_requestScene;
 
         virtual void inputUpdate(const sf::Event &event) = 0;
         virtual void graphicsUpdate() = 0;
 
     public:
-        Scene(sf::RenderWindow &window, ChangeSceneFunction changeScene): m_window{ window }, m_changeScene{ changeScene } {}
+        Scene(sf::RenderWindow &window, RequestSceneFunction requestScene, const std::string &name = "Default"): m_window{ window }, m_requestScene{ requestScene }, m_name{ name } {}
 
         virtual ~Scene() {}
 

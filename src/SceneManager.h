@@ -18,6 +18,7 @@ namespace nik {
     private:
         std::map<std::string, std::unique_ptr<Scene>> m_sceneMap;
         std::unique_ptr<Scene> m_currentScene;
+        std::string m_requestedScene;
 
     public:
         SceneManager(sf::RenderWindow &window);
@@ -27,7 +28,7 @@ namespace nik {
 
         const Scene& getCurrentScene();
         void setCurrentScene(const std::string &sceneName);
-        static Scene::ChangeSceneFunction getChangeSceneFunction(SceneManager &sceneManager);
+        static Scene::RequestSceneFunction getRequestSceneChangeFunction(SceneManager &sceneManager);
 
         void update();
     };
