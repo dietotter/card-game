@@ -9,13 +9,14 @@ namespace nik {
 
     class Scene
     {
+    public:
+        using ChangeSceneFunction = std::function<void(const std::string&)>;
+        
     private:
         void commonInputUpdate();
         void commonGraphicsUpdate();
 
     protected:
-        using ChangeSceneFunction = std::function<void(const std::string&)>;
-        
         // TODO maybe this should be in SceneManager, which just calls Scene.update(sf::RenderWindow &window)
         sf::RenderWindow &m_window;
         ChangeSceneFunction m_changeScene;

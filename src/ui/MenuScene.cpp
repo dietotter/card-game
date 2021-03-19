@@ -43,6 +43,7 @@ namespace nik {
         startButton->setOutlineThickness(2);
         startButton->setOutlineColor(sf::Color::Red);
         startButton->onClick = [this](const sf::Event &event) {
+            this->m_changeScene("Game");
             return true;
         };
         startButton->setTextString("Why ar u gay?");

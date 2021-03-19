@@ -9,6 +9,7 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <functional>
 
 namespace nik {
 
@@ -26,6 +27,7 @@ namespace nik {
 
         const Scene& getCurrentScene();
         void setCurrentScene(const std::string &sceneName);
+        static Scene::ChangeSceneFunction getChangeSceneFunction(SceneManager &sceneManager);
 
         void update();
     };
