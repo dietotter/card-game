@@ -3,6 +3,7 @@
 #include "UIElement.h"
 
 #include <memory>
+#include <string>
 
 namespace nik {
 

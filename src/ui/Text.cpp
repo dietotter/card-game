@@ -51,21 +51,24 @@ namespace nik {
     {
         sf::FloatRect bounds{ m_text.getGlobalBounds() };
         // need to do these transormations due to weird bounding box of sf::Text
-        bounds.left = getPosition().x;
-        bounds.top = getPosition().y;
+        bounds.left = getActualPosition().x;
+        bounds.top = getActualPosition().y;
         bounds.height *= 2;
         return bounds;
     }
 
     void Text::draw(sf::RenderTarget &target, sf::RenderStates states) const
     {
-        states.transform *= getTransform();
-
-        target.draw(m_text, states);
-
-        for (const auto &element : m_childrenList)
+        if (!m_hidden)
         {
-            target.draw(*element, states);
+            states.transform *= getTransform();
+
+            target.draw(m_text, states);
+
+            for (const auto &element : m_childrenList)
+            {
+                target.draw(*element, states);
+            }
         }
     }
 

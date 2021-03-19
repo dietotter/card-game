@@ -81,19 +81,27 @@ namespace nik {
 
     void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
     {
-        states.transform *= getTransform();
-
-        target.draw(m_rect, states);
-        target.draw(m_buttonText, states);
-
-        for (const auto &element : m_childrenList)
+        if (!m_hidden)
         {
-            target.draw(*element, states);
+            states.transform *= getTransform();
+
+            target.draw(m_rect, states);
+            target.draw(m_buttonText, states);
+
+            for (const auto &element : m_childrenList)
+            {
+                target.draw(*element, states);
+            }
         }
     }
     
     bool Button::handleEvent(const sf::Event &event)
     {
+        if (m_hidden)
+        {
+            return false;
+        }
+        
         for (const auto &child : m_childrenList)
         {
             bool handled{ child->handleEvent(event) };

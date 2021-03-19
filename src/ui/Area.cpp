@@ -33,13 +33,16 @@ namespace nik {
 
     void Area::draw(sf::RenderTarget &target, sf::RenderStates states) const
     {
-        states.transform *= getTransform();
-
-        target.draw(m_rect, states);
-
-        for (const auto &element : m_childrenList)
+        if (!m_hidden)
         {
-            target.draw(*element, states);
+            states.transform *= getTransform();
+
+            target.draw(m_rect, states);
+
+            for (const auto &element : m_childrenList)
+            {
+                target.draw(*element, states);
+            }
         }
     }
 }

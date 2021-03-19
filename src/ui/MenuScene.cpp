@@ -1,6 +1,11 @@
 #include "MenuScene.h"
 #include "Text.h"
 #include "Button.h"
+#include "components/Controls.h"
+
+#include <algorithm>
+#include <memory>
+#include <string>
 
 namespace nik {
 
@@ -36,6 +41,7 @@ namespace nik {
         m_canvas.addChild(std::move(text));
 
         auto startButton { std::make_unique<Button>(300, 100) };
+        auto controlsButton { std::make_unique<Button>(300, 300) };
         auto quitButton { std::make_unique<Button>(300, 500) };
 
         startButton->setPercentSize(50, 10, m_canvas.getWidth(), m_canvas.getHeight());
@@ -50,6 +56,31 @@ namespace nik {
         startButton->setCharacterSize(35);
         startButton->setTextColor(sf::Color(255, 255, 0, 255));
         startButton->setTextPressedColor(sf::Color(255, 0, 255, 255));
+
+        auto controlsPopUp{ std::make_unique<Controls>() };
+        controlsPopUp->setPercentSize(90, 90, m_canvas.getWidth(), m_canvas.getHeight());
+        controlsPopUp->setPercentPosition(5, 5, m_canvas.getWidth(), m_canvas.getHeight());
+        controlsPopUp->setName("ControlsPopUp");
+        controlsPopUp->setHidden(true);
+
+        controlsButton->setWidthPercent(70, m_canvas.getWidth());
+        controlsButton->setHeight(100.f);
+        controlsButton->setColor(sf::Color(200, 200, 200, 255));
+        controlsButton->setOutlineThickness(2);
+        controlsButton->setOutlineColor(sf::Color(100, 100, 100, 255));
+        controlsButton->onClick = [this](const sf::Event &event) {
+            auto controlsElement{ std::find_if(
+                this->m_canvas.getChildren().begin(),
+                this->m_canvas.getChildren().end(),
+                getUIElementNameComparator("ControlsPopUp")
+            ) };
+            controlsElement->get()->setHidden(false);
+            return true;
+        };
+        controlsButton->setTextString("Controls");
+        controlsButton->setCharacterSize(40);
+        controlsButton->setTextColor(sf::Color(50, 50, 50, 255));
+        controlsButton->setTextPressedColor(sf::Color(70, 70, 70, 255));
 
         quitButton->setWidthPercent(70, m_canvas.getWidth());
         quitButton->setHeight(100.f);
@@ -66,7 +97,9 @@ namespace nik {
         quitButton->setTextPressedColor(sf::Color(200, 200, 200, 255));
 
         m_canvas.addChild(std::move(startButton));
+        m_canvas.addChild(std::move(controlsButton));
         m_canvas.addChild(std::move(quitButton));
+        m_canvas.addChild(std::move(controlsPopUp));
     }
 
     std::unique_ptr<Scene> MenuScene::clone() const

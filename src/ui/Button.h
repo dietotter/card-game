@@ -26,7 +26,7 @@ namespace nik {
     public:
         Button();
         Button(int x, int y, float width = 0, float height = 0);
-        Button(const Button &area);
+        Button(const Button &button);
 
         void setButtonText(const Text &text);
         void setTextString(const std::string &string);

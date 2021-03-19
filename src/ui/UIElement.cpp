@@ -50,8 +50,8 @@ namespace nik {
         adjustChildrenSize();
     }
 
-    UIElement::UIElement(int x, int y, float width, float height)
-        : m_width{ width }, m_height{ height }
+    UIElement::UIElement(int x, int y, float width, float height, const std::string &name)
+        : m_width{ width }, m_height{ height }, m_name{ name }
     {
         setPosition(x, y);
     }
@@ -69,6 +69,12 @@ namespace nik {
         }
 
         return *this;
+    }
+
+    void UIElement::addChild(std::unique_ptr<UIElement> element)
+    {
+        element->setParentActualPosition(getActualPosition());
+        m_childrenList.push_back(std::move(element));
     }
 
     void UIElement::setWidth(float width)
@@ -117,9 +123,39 @@ namespace nik {
         adjustSize(parentWidth, parentHeight);
     }
 
+    void UIElement::setPercentPosition(int xPercent, int yPercent, float parentWidth, float parentHeight)
+    {
+        setPosition(parentWidth * xPercent / 100, parentHeight * yPercent / 100);
+    }
+
+    void UIElement::setPosition(float x, float y)
+    {
+        sf::Transformable::setPosition(x, y);
+
+        for (auto &element : m_childrenList)
+        {
+            element->setParentActualPosition(getActualPosition());
+        }
+    }
+
+    void UIElement::setParentActualPosition(const sf::Vector2f &position)
+    {
+        m_parentActualPosition = position;
+
+        for (auto &element : m_childrenList)
+        {
+            element->setParentActualPosition(getActualPosition());
+        }
+    }
+
+    sf::Vector2f UIElement::getActualPosition() const
+    {
+        return getPosition() + m_parentActualPosition;
+    }
+
     sf::FloatRect UIElement::getBoundingBox() const
     {
-        return { getPosition(), { m_width, m_height } };
+        return { getActualPosition(), { m_width, m_height } };
     }
     
     bool UIElement::contains(int x, int y) const
@@ -129,6 +165,11 @@ namespace nik {
     
     bool UIElement::handleEvent(const sf::Event &event)
     {
+        if (m_hidden)
+        {
+            return false;
+        }
+
         for (const auto &child : m_childrenList)
         {
             bool handled{ child->handleEvent(event) };
@@ -144,6 +185,13 @@ namespace nik {
         }
 
         return false;
+    }
+
+    std::function<bool(const std::unique_ptr<UIElement> &elem)> getUIElementNameComparator(const std::string &name)
+    {
+        return [&](const std::unique_ptr<UIElement> &elem) {
+            return elem.get()->getName() == name;
+        };
     }
 
 }
