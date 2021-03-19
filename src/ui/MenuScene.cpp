@@ -32,8 +32,14 @@ namespace nik {
         m_canvas.setPercentSize(100, 100, windowSize.x, windowSize.y);
         m_canvas.setColor(sf::Color::Cyan);
         m_canvas.onClick = [this](const sf::Event &event) {
-            this->m_canvas.setColor(sf::Color(event.mouseButton.x * event.mouseButton.y));
-            return true;
+            // temporary solution for pop-up click-off hiding
+            auto controlsElement{ std::find_if(
+                this->m_canvas.getChildren().begin(),
+                this->m_canvas.getChildren().end(),
+                getUIElementNameComparator("ControlsPopUp")
+            ) };
+            controlsElement->get()->setHidden(true);
+            return false;
         };
         
         auto text{ std::make_unique<Text>(100, 200, "U ar gay", 120) };
@@ -73,6 +79,8 @@ namespace nik {
                 this->m_canvas.getChildren().begin(),
                 this->m_canvas.getChildren().end(),
                 getUIElementNameComparator("ControlsPopUp")
+                // TODO hide pop-up on click-off, but also don't stop propagating if done so
+                // (will also be useful for in-game pop-ups)
             ) };
             controlsElement->get()->setHidden(false);
             return true;

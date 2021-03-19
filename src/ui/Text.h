@@ -26,6 +26,7 @@ namespace nik {
 
         void setString(const std::string &string) { m_text.setString(string); }
         void setCharacterSize(int characterSize) { m_text.setCharacterSize(characterSize); }
+        void setLineSpacing(float spacingFactor) { m_text.setLineSpacing(spacingFactor); }
 
         virtual void setColor(const sf::Color &color) override;
         virtual sf::FloatRect getBoundingBox() const override;
