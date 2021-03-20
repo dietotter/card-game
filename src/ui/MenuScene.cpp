@@ -15,6 +15,7 @@ namespace nik {
         {
             // update the canvas size to the new size of the window (set in Scene class)
             sf::Vector2f windowSize{ m_window.getSize() };
+            // TODO if element has been set a percentage-based location, it is not adjusted right now
             m_canvas.setPercentSize(m_canvas.getWidthPercent(), m_canvas.getHeightPercent(), windowSize.x, windowSize.y);
         }
 

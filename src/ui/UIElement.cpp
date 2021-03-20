@@ -170,9 +170,9 @@ namespace nik {
             return false;
         }
 
-        for (const auto &child : m_childrenList)
+        for (auto it{ m_childrenList.rbegin() }; it != m_childrenList.rend(); ++it)
         {
-            bool handled{ child->handleEvent(event) };
+            bool handled{ (*it)->handleEvent(event) };
             if (handled)
             {
                 return true;

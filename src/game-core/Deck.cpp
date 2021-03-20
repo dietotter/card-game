@@ -1,8 +1,10 @@
 #include "Deck.h"
 #include "../core-constants.h"
 #include "../core-globals.h"
+#include "../setup.h"
 
 #include <algorithm>
+#include <exception>
 #include <stdexcept>
 
 namespace nik {
@@ -124,9 +126,16 @@ namespace nik {
 
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::T && selected)
         {
-            Card card{ takeTopCard() };
-            card.setPosition(getPosition());
-            board.addObject(std::make_unique<Card>(card));
+            try
+            {
+                Card card{ takeTopCard() };
+                card.setPosition(getPosition());
+                board.addObject(std::make_unique<Card>(card));
+            }
+            catch (const std::exception &e)
+            {
+                std::cerr << e.what() << '\n';
+            }
 
             return true;
         }
@@ -137,6 +146,13 @@ namespace nik {
     void Deck::draw(sf::RenderTarget &target, sf::RenderStates states) const
     {
         states.transform *= getTransform();
+
+        // draw rect to know the location of the deck when there are no cards in it
+        sf::RectangleShape handRect{ sf::Vector2f(cnst::cardWidth, cnst::cardHeight) };
+        handRect.setOutlineThickness(2);
+        handRect.setOutlineColor(sf::Color::White);
+        handRect.setFillColor(sf::Color::Transparent);
+        target.draw(handRect, states);
 
         int counter{ 0 };
         for (const auto &card : m_cardList)
@@ -157,6 +173,11 @@ namespace nik {
 
             ++counter;
         }
+
+        sf::Text cardsInDeck{ std::to_string(counter), setup::getGlobalFont() };
+        cardsInDeck.setStyle(sf::Text::Bold);
+        states.transform.translate(10, cnst::cardHeight - 40);
+        target.draw(cardsInDeck, states);
     }
 
     std::unique_ptr<GameObject> Deck::clone() const

@@ -40,7 +40,7 @@ namespace nik {
             }
         }
 
-        for (auto it{ m_objectList.rbegin() }; it != m_objectList.rend(); ++it )
+        for (auto it{ m_objectList.rbegin() }; it != m_objectList.rend(); ++it)
         {
             bool handled{ false };
 
