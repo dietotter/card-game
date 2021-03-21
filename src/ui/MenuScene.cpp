@@ -1,7 +1,8 @@
 #include "MenuScene.h"
 #include "Text.h"
 #include "Button.h"
-#include "components/Controls.h"
+#include "modules/Controls.h"
+#include "modules/ServerPortInput.h"
 
 #include <algorithm>
 #include <memory>
@@ -32,16 +33,16 @@ namespace nik {
         sf::Vector2f windowSize{ m_window.getSize() };
         m_canvas.setPercentSize(100, 100, windowSize.x, windowSize.y);
         m_canvas.setColor(sf::Color(0x281903FF));
-        m_canvas.onClick = [this](const sf::Event &event) {
-            // temporary solution for pop-up click-off hiding
-            auto controlsElement{ std::find_if(
-                this->m_canvas.getChildren().begin(),
-                this->m_canvas.getChildren().end(),
-                getUIElementNameComparator("ControlsPopUp")
-            ) };
-            controlsElement->get()->setHidden(true);
-            return false;
-        };
+        // m_canvas.onClick = [this](const sf::Event &event) {
+        //     // temporary solution for pop-up click-off hiding
+        //     auto controlsElement{ std::find_if(
+        //         this->m_canvas.getChildren().begin(),
+        //         this->m_canvas.getChildren().end(),
+        //         getUIElementNameComparator("ControlsPopUp")
+        //     ) };
+        //     controlsElement->get()->setHidden(true);
+        //     return false;
+        // };
 
         auto title{ std::make_unique<Text>("Nik's Card Game Simulator Thing") };
         title->setPercentPosition(10, 10, m_canvas.getWidth(), m_canvas.getHeight());
@@ -88,8 +89,6 @@ namespace nik {
                 this->m_canvas.getChildren().begin(),
                 this->m_canvas.getChildren().end(),
                 getUIElementNameComparator("ControlsPopUp")
-                // TODO hide pop-up on click-off, but also don't stop propagating if done so
-                // (will also be useful for in-game pop-ups)
             ) };
             controlsElement->get()->setHidden(false);
             return true;
@@ -100,6 +99,12 @@ namespace nik {
         controlsButton->setTextPressedColor(sf::Color(0x6E350FFF));
         controlsButton->setTextStyle(sf::Text::Bold);
 
+        auto hostServerPopUp{ std::make_unique<ServerPortInput>() };
+        hostServerPopUp->setPercentSize(40, 20, m_canvas.getWidth(), m_canvas.getHeight());
+        hostServerPopUp->setPercentPosition(30, 40, m_canvas.getWidth(), m_canvas.getHeight());
+        hostServerPopUp->setName("HostServerPopUp");
+        hostServerPopUp->setHidden(true);
+
         playOnlineButton->setWidthPercent(80, m_canvas.getWidth());
         playOnlineButton->setPercentPosition(10, 55, m_canvas.getWidth(), m_canvas.getHeight());
         playOnlineButton->setHeight(100.f);
@@ -107,6 +112,12 @@ namespace nik {
         playOnlineButton->setOutlineThickness(2);
         playOnlineButton->setOutlineColor(sf::Color(0x3E1507FF));
         playOnlineButton->onClick = [this](const sf::Event &event) {
+            auto hostServerElement{ std::find_if(
+                this->m_canvas.getChildren().begin(),
+                this->m_canvas.getChildren().end(),
+                getUIElementNameComparator("HostServerPopUp")
+            ) };
+            hostServerElement->get()->setHidden(false);
             return true;
         };
         playOnlineButton->setTextString("Play online");
@@ -153,6 +164,7 @@ namespace nik {
         m_canvas.addChild(std::move(playOnlineButton));
         m_canvas.addChild(std::move(quitButton));
         m_canvas.addChild(std::move(controlsPopUp));
+        m_canvas.addChild(std::move(hostServerPopUp));
     }
 
     std::unique_ptr<Scene> MenuScene::clone() const

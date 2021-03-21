@@ -29,6 +29,8 @@ namespace nik {
         void setLineSpacing(float spacingFactor) { m_text.setLineSpacing(spacingFactor); }
         void setStyle(sf::Uint32 style) { m_text.setStyle(style); }
 
+        const sf::String& getString() const { return m_text.getString(); }
+
         virtual void setColor(const sf::Color &color) override;
         virtual sf::FloatRect getBoundingBox() const override;
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

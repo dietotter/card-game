@@ -4,13 +4,15 @@
 
 namespace nik {
 
-    class Controls : public Area
+    class PopUp : public Area
     {
     protected:
         virtual std::unique_ptr<UIElement> clone() const override;
 
     public:
-        Controls();
+        PopUp();
+        
+        virtual bool handleEvent(const sf::Event &event) override;
     };
 
 }
