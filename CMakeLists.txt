@@ -38,6 +38,8 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Die.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/GameScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Client.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Server.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Area.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/Button.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/MenuScene.cpp
