@@ -1,8 +1,8 @@
 #include "MenuScene.h"
-#include "Text.h"
-#include "Button.h"
-#include "modules/Controls.h"
-#include "modules/ServerPortInput.h"
+#include "../../core/Text.h"
+#include "../../core/Button.h"
+#include "pop-ups/Controls.h"
+#include "pop-ups/ServerPortInput.h"
 
 #include <algorithm>
 #include <memory>
@@ -33,16 +33,6 @@ namespace nik {
         sf::Vector2f windowSize{ m_window.getSize() };
         m_canvas.setPercentSize(100, 100, windowSize.x, windowSize.y);
         m_canvas.setColor(sf::Color(0x281903FF));
-        // m_canvas.onClick = [this](const sf::Event &event) {
-        //     // temporary solution for pop-up click-off hiding
-        //     auto controlsElement{ std::find_if(
-        //         this->m_canvas.getChildren().begin(),
-        //         this->m_canvas.getChildren().end(),
-        //         getUIElementNameComparator("ControlsPopUp")
-        //     ) };
-        //     controlsElement->get()->setHidden(true);
-        //     return false;
-        // };
 
         auto title{ std::make_unique<Text>("Nik's Card Game Simulator Thing") };
         title->setPercentPosition(10, 10, m_canvas.getWidth(), m_canvas.getHeight());

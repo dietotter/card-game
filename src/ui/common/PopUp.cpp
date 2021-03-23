@@ -1,6 +1,6 @@
 #include "PopUp.h"
 
-#include "../Button.h"
+#include "../core/Button.h"
 
 namespace nik {
 

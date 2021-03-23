@@ -25,12 +25,6 @@ namespace nik {
         static void threadUpdate();
 
         static bool isConnectedToServer() { return m_connected; }
-
-        // all of the below methods are only for internal use (bad design for now T_T)
-        // static std::thread& getThread() { return m_clientThread; }
-        // static sf::TcpSocket& getClientSocket() { return m_clientSocket; }
-        // static void setConnectedToServer(bool connected) { m_connected = connected; }
-        // static void setThread(std::thread &clientThread) { m_clientThread = std::move(clientThread); }
     };
 
 }

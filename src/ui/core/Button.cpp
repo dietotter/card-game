@@ -1,5 +1,5 @@
 #include "Button.h"
-#include "../setup.h"
+#include "../../setup.h"
 
 namespace nik {
 

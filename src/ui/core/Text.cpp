@@ -1,6 +1,6 @@
 #include "Text.h"
 
-#include "../setup.h"
+#include "../../setup.h"
 
 namespace nik {
 

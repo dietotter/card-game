@@ -1,6 +1,7 @@
 #pragma once
 
 #include "network-constants.h"
+#include "ThreadRAII.h"
 
 #include <SFML/Network.hpp>
 
@@ -27,11 +28,5 @@ namespace nik {
         static void threadUpdate();
 
         static bool isRunning() { return m_running; }
-
-        // all of the below methods are only for internal use (bad design for now T_T)
-        // static std::thread& getThread() { return m_serverThread; }
-        // static sf::TcpListener& getListener() { return m_listener; }
-        // static void setRunning(bool running) { m_running = running; }
-        // static void setThread(std::thread &serverThread) { m_serverThread = std::move(serverThread); }
     };
 }

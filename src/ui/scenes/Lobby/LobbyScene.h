@@ -1,13 +1,11 @@
 #pragma once
 
-#include "../Scene.h"
-#include "Area.h"
-
-#include <SFML/Graphics.hpp>
+#include "../../../Scene.h"
+#include "../../core/Area.h"
 
 namespace nik {
 
-    class MenuScene : public Scene
+    class LobbyScene : public Scene
     {
     private:
         Area m_canvas;
@@ -17,12 +15,13 @@ namespace nik {
         virtual void graphicsUpdate() override;
 
     public:
-        MenuScene(sf::RenderWindow &window, Scene::RequestSceneFunction requestScene): Scene{ window, requestScene, "Menu" }
+        LobbyScene(sf::RenderWindow &window, Scene::RequestSceneFunction requestScene): Scene{ window, requestScene, "Lobby" }
         {
         }
 
         virtual void initialize() override;
         virtual std::unique_ptr<Scene> clone() const override;
+
     };
 
 }

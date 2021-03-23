@@ -1,6 +1,6 @@
 #include "Controls.h"
 
-#include "../Text.h"
+#include "../../../core/Text.h"
 
 #include <SFML/Graphics.hpp>
 

@@ -1,9 +1,9 @@
 #include "ServerPortInput.h"
 
-#include "../TextInput.h"
+#include "../../../core/TextInput.h"
 // ======= server test part =======
-#include "../Text.h"
-#include "../../net/Server.h"
+#include "../../../core/Text.h"
+#include "../../../../net/Server.h"
 // ======= server test part =======
 
 #include <SFML/Graphics.hpp>

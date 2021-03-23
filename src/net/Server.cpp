@@ -46,6 +46,9 @@ namespace nik {
 
         while (isRunning())
         {
+            // selector.wait(1 sec) will be blocking for 1 second (waiting for events in listener and sockets), and
+            // then will return false. This is needed for the while loop to run and check for if the server is still running.
+            // selector.wait() would be blocking for infinity (until some event happens)
             if (selector.wait(sf::seconds(1.f)))
             {
                 if (selector.isReady(m_listener))
@@ -64,6 +67,7 @@ namespace nik {
                 {
                     if (selector.isReady(*client))
                     {
+                        // TODO
                         sf::Packet packet;
                         if (client->receive(packet) == sf::Socket::Done)
                         {

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "../components/PopUp.h"
+#include "../../../common/PopUp.h"
 
 namespace nik {
 
-    class ServerPortInput : public PopUp
+    class Controls : public PopUp
     {
     protected:
         virtual std::unique_ptr<UIElement> clone() const override;
 
     public:
-        ServerPortInput();
+        Controls();
     };
 
 }

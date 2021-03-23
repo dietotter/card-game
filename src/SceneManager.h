@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "ui/MenuScene.h"
+#include "ui/scenes/Menu/MenuScene.h"
 #include "game-core/GameScene.h"
 
 #include <SFML/Graphics.hpp>
