@@ -1,17 +1,14 @@
 #include "ServerPortInput.h"
 
+#include "../../Lobby/LobbyScene.h"
 #include "../../../core/TextInput.h"
-// ======= server test part =======
 #include "../../../core/Text.h"
 #include "../../../../net/Server.h"
-// ======= server test part =======
 
 #include <SFML/Graphics.hpp>
 
-// ======= server test part =======
 #include <string>
 #include <exception>
-// ======= server test part =======
 
 namespace nik {
 
@@ -20,33 +17,42 @@ namespace nik {
         return std::make_unique<ServerPortInput>(*this);
     }
 
-    ServerPortInput::ServerPortInput(): PopUp()
+    ServerPortInput::ServerPortInput(Scene::RequestSceneFunction requestScene): PopUp()
     {
         auto portInput{ std::make_unique<TextInput>(50, 100, 250, 50) };
         portInput->setCharacterSize(40);
         portInput->setPlaceholderString("Port to start the server");
         portInput->setWidthPercent(90, getWidth());
-        // ======= server test part =======
-        portInput->onEnterPress = [this](const std::string &inputString) {
-            if (inputString.empty())
+        // try to start server with entered port, when Enter is pressed on port input
+        portInput->onEnterPress = [this, requestScene](const std::string &inputString) {
+            // remove previous exception message, if such existed
+            std::remove_if(
+                m_childrenList.begin(),
+                m_childrenList.end(),
+                getUIElementNameComparator("ServerStartException")
+            );
+
+            try
             {
-                try
+                if (inputString.empty())
                 {
                     Server::listen();
-                    addChild(std::make_unique<Text>(50, 0, "Server started!"));
                 }
-                catch (const std::exception &e)
+                else
                 {
-                    addChild(std::make_unique<Text>(50, 0, e.what()));
+                    int port{ std::stoi(inputString) };
+                    Server::listen(port);
                 }
+
+                requestScene("Lobby", std::to_string(static_cast<int>(LobbyScene::LobbyViewType::server)));
             }
-            else
+            catch (const std::exception &e)
             {
-                // TODO if we don't stop server, exception happens on "Quit" button press
-                Server::stop();
+                auto startExceptionText{ std::make_unique<Text>(50, 0, e.what()) };
+                startExceptionText->setName("ServerStartException");
+                addChild(std::move(startExceptionText));
             }
         };
-        // ======= server test part =======
         
         addChild(std::move(portInput));
     }

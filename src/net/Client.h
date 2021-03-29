@@ -19,7 +19,7 @@ namespace nik {
         static bool m_connected;
 
     public:
-        static void connectToServer(std::string connectionUrl = ("localhost" + std::to_string(cnst::defaultServerPort)));
+        static void connectToServer(std::string connectionUrl = ("localhost:" + std::to_string(cnst::defaultServerPort)));
         static void disconnect();
 
         static void threadUpdate();

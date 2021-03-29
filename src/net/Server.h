@@ -1,7 +1,6 @@
 #pragma once
 
 #include "network-constants.h"
-#include "ThreadRAII.h"
 
 #include <SFML/Network.hpp>
 
@@ -18,11 +17,15 @@ namespace nik {
     private:
         static std::thread m_serverThread;
         static sf::TcpListener m_listener;
+        // TODO std::deque for m_receivedEventsQueue and m_eventsSendingQueue
+        // also, maybe separate class for NetworkEvents, with either inner "type" field, depending on which
+        // the handling will be performed, or visitor pattern (https://en.wikipedia.org/wiki/Visitor_pattern#Sources)
 
         static bool m_running;
 
     public:
         static void listen(int port = cnst::defaultServerPort);
+        // TODO if we don't stop server, exception happens on "Quit" button press
         static void stop();
 
         static void threadUpdate();

@@ -146,6 +146,20 @@ namespace nik {
             }
         }
 
+        if (event.type == sf::Event::KeyPressed && m_focused)
+        {
+            // TODO make this OS-dependent (control for windows, cmd for mac)
+            if (event.key.system && event.key.code == sf::Keyboard::V)
+            {
+                m_inputText.setString(sf::Clipboard::getString());
+            }
+
+            if (event.key.system && event.key.code == sf::Keyboard::C)
+            {
+                sf::Clipboard::setString(m_inputText.getString());
+            }
+        }
+
         if (event.type == sf::Event::TextEntered && m_focused)
         {
             // Backspace

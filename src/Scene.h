@@ -10,7 +10,7 @@ namespace nik {
     class Scene
     {
     public:
-        using RequestSceneFunction = std::function<void(const std::string&)>;
+        using RequestSceneFunction = std::function<void(const std::string&, const std::string&)>;
         
     private:
         std::string m_name{};
@@ -31,7 +31,9 @@ namespace nik {
 
         virtual ~Scene() {}
 
-        virtual void initialize() = 0;
+        // wanted to use params as a class with virtual function with covariant return types,
+        // but scratched that idea for now because I don't need a lot of params usage right now
+        virtual void initialize(const std::string &params) = 0;
         // for polymorphic Scene copying
         virtual std::unique_ptr<Scene> clone() const = 0;
         

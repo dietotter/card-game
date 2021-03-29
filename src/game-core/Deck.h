@@ -29,6 +29,7 @@ namespace nik {
 
         std::size_t size() const { return m_cardList.size(); }
         bool isEmpty() const { return m_cardList.empty(); }
+        const std::vector<Card>& getCardList() const { return m_cardList; }
 
         Deck& operator=(const Deck &deck);
         

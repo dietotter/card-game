@@ -40,7 +40,7 @@ namespace nik {
         m_window.draw(m_board);
     }
 
-    void GameScene::initialize()
+    void GameScene::initialize(const std::string &params)
     {   
         auto &library{ setup::getLibrary() };
 

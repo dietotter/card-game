@@ -27,6 +27,7 @@ namespace nik {
         closeButton->setCharacterSize(40);
         closeButton->setTextColor(sf::Color::White);
         closeButton->setTextPressedColor(sf::Color(200, 200, 200, 255));
+        closeButton->setName("PopUpCloseButton");
         
         addChild(std::move(closeButton));
     }

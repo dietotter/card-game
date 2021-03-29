@@ -5,13 +5,13 @@
 
 namespace nik {
 
-    class ServerPortInput : public PopUp
+    class JoinServerInput : public PopUp
     {
     protected:
         virtual std::unique_ptr<UIElement> clone() const override;
 
     public:
-        ServerPortInput(Scene::RequestSceneFunction requestScene);
+        JoinServerInput(Scene::RequestSceneFunction requestScene);
     };
 
 }

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Scene.h"
-#include "ui/scenes/Menu/MenuScene.h"
-#include "game-core/GameScene.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -19,6 +17,7 @@ namespace nik {
         std::map<std::string, std::unique_ptr<Scene>> m_sceneMap;
         std::unique_ptr<Scene> m_currentScene;
         std::string m_requestedScene;
+        std::string m_requestedSceneParams;
 
     public:
         SceneManager(sf::RenderWindow &window);

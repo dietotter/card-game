@@ -65,6 +65,8 @@ namespace nik {
                 }
             }
         }
+
+        m_clientSocket.disconnect();
     }
 
 }

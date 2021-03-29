@@ -17,4 +17,7 @@ namespace nik::setup
     const sf::Font& getGlobalFont();
 
     Deck loadDeckFromFile(const std::string &filename);
+    Deck loadDeckFromString(const std::string &deckString);
+    std::string loadDeckStringFromFile(const std::string &filename);
+    std::string convertDeckToString(const Deck &deck);
 }

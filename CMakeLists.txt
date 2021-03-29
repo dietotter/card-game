@@ -38,6 +38,7 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Die.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/GameScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Player.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Client.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Server.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/common/PopUp.cpp
@@ -49,6 +50,7 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/scenes/Lobby/LobbyScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/scenes/Menu/MenuScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/scenes/Menu/pop-ups/Controls.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/scenes/Menu/pop-ups/JoinServerInput.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/scenes/Menu/pop-ups/ServerPortInput.cpp
 )
 

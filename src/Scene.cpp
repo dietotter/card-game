@@ -22,7 +22,7 @@ namespace nik {
                 m_window.setView(sf::View(visibleArea));
             }
 
-            // handle scene-specific input
+            // handle scene-specific put
             inputUpdate(event);
         }
     }

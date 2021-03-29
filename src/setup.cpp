@@ -2,6 +2,7 @@
 #include "core-constants.h"
 
 #include <fstream>
+#include <sstream>
 #include <exception>
 #include <stdexcept>
 #include <regex>
@@ -261,6 +262,66 @@ namespace nik::setup {
         }
 
         return deck;
+    }
+
+    Deck loadDeckFromString(const std::string &deckString)
+    {
+        std::istringstream ss{ deckString };
+
+        // TODO idk if stringstream can be initialized incorrectly
+        if (!ss)
+        {
+            throw std::runtime_error("Something wrong with deck string");
+        }
+
+        std::string token;
+        Deck deck;
+
+        while (std::getline(ss, token))
+        {
+            // TODO error handling on wrong input
+            int cardId{ std::stoi(token) };
+            
+            // this assumes that card id = card's position in library
+            deck.putCardOnTop(p_library[cardId]);
+        }
+
+        return deck;
+    }
+
+    std::string loadDeckStringFromFile(const std::string &filename)
+    {
+        std::ifstream inf{ filename };
+
+        if (!inf)
+        {
+            throw std::runtime_error("Couldn't open cards data file");
+        }
+
+        std::string deckString;
+
+        while (inf)
+        {
+            // TODO error handling on wrong input
+            int cardId;
+            inf >> cardId;
+            
+            deckString += std::to_string(cardId) + '\n';
+        }
+
+        return deckString;
+    }
+
+    std::string convertDeckToString(const Deck &deck)
+    {
+        std::string deckString;
+
+        for (const auto &card : deck.getCardList())
+        {
+            deckString += std::to_string(card.getId()) + '\n';
+        }
+
+        return deckString;
     }
 
 }

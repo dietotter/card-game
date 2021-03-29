@@ -77,6 +77,8 @@ namespace nik {
                 }
             }
         }
+
+        m_listener.close();
     }
     
 }

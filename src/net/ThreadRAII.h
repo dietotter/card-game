@@ -8,6 +8,8 @@
 // Do i join/detach/don't do this at all in destructor? Will the program not terminate if main has ended, but this thread
 // is endlessly running in a loop?
 // (I guess I at least have to try it out in practise. Also, maybe it's not worth it to do this thread wrapper stuff at all)
+
+// FOR NOW DECIDED TO LEAVE IT ALONE
 namespace nik {
 
     class ThreadRAII

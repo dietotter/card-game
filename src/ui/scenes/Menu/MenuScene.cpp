@@ -2,6 +2,7 @@
 #include "../../core/Text.h"
 #include "../../core/Button.h"
 #include "pop-ups/Controls.h"
+#include "pop-ups/JoinServerInput.h"
 #include "pop-ups/ServerPortInput.h"
 
 #include <algorithm>
@@ -28,7 +29,7 @@ namespace nik {
         m_window.draw(m_canvas);
     }
 
-    void MenuScene::initialize()
+    void MenuScene::initialize(const std::string &params)
     {
         sf::Vector2f windowSize{ m_window.getSize() };
         m_canvas.setPercentSize(100, 100, windowSize.x, windowSize.y);
@@ -40,8 +41,12 @@ namespace nik {
         title->setStyle(sf::Text::Bold);
         title->setColor(sf::Color(0xD6E0FDFF));
 
+        // TODO startButton may eventually be replaced by joinServerButton
+        // (and solo-testing stuff will be available through the server)
         auto startButton { std::make_unique<Button>() };
+        // TODO rename playOnlineButton => hostServerButton
         auto playOnlineButton { std::make_unique<Button>() };
+        // TODO collectionsButton is currently joinServerButton
         auto collectionButton { std::make_unique<Button>() };
         auto controlsButton { std::make_unique<Button>() };
         auto quitButton { std::make_unique<Button>() };
@@ -53,7 +58,7 @@ namespace nik {
         startButton->setOutlineThickness(2);
         startButton->setOutlineColor(sf::Color(0x3E1507FF));
         startButton->onClick = [this](const sf::Event &event) {
-            this->m_requestScene("Game");
+            this->m_requestScene("Game", "");
             return true;
         };
         startButton->setTextString("Play");
@@ -69,7 +74,7 @@ namespace nik {
         controlsPopUp->setHidden(true);
 
         controlsButton->setWidthPercent(80, m_canvas.getWidth());
-        controlsButton->setPercentPosition(10, 40, m_canvas.getWidth(), m_canvas.getHeight());
+        controlsButton->setPercentPosition(10, 70, m_canvas.getWidth(), m_canvas.getHeight());
         controlsButton->setHeight(100.f);
         controlsButton->setColor(sf::Color(0xB5DAF3FF));
         controlsButton->setOutlineThickness(2);
@@ -89,7 +94,7 @@ namespace nik {
         controlsButton->setTextPressedColor(sf::Color(0x6E350FFF));
         controlsButton->setTextStyle(sf::Text::Bold);
 
-        auto hostServerPopUp{ std::make_unique<ServerPortInput>() };
+        auto hostServerPopUp{ std::make_unique<ServerPortInput>(m_requestScene) };
         hostServerPopUp->setPercentSize(40, 20, m_canvas.getWidth(), m_canvas.getHeight());
         hostServerPopUp->setPercentPosition(30, 40, m_canvas.getWidth(), m_canvas.getHeight());
         hostServerPopUp->setName("HostServerPopUp");
@@ -110,22 +115,34 @@ namespace nik {
             hostServerElement->get()->setHidden(false);
             return true;
         };
-        playOnlineButton->setTextString("Play online");
+        playOnlineButton->setTextString("Host server");
         playOnlineButton->setCharacterSize(40);
         playOnlineButton->setTextColor(sf::Color(0xD6E0FDFF));
         playOnlineButton->setTextPressedColor(sf::Color(0x929B22FF));
         playOnlineButton->setTextStyle(sf::Text::Bold);
 
+        auto joinServerPopUp{ std::make_unique<JoinServerInput>(m_requestScene) };
+        joinServerPopUp->setPercentSize(40, 20, m_canvas.getWidth(), m_canvas.getHeight());
+        joinServerPopUp->setPercentPosition(30, 40, m_canvas.getWidth(), m_canvas.getHeight());
+        joinServerPopUp->setName("JoinServerPopUp");
+        joinServerPopUp->setHidden(true);
+
         collectionButton->setWidthPercent(80, m_canvas.getWidth());
-        collectionButton->setPercentPosition(10, 70, m_canvas.getWidth(), m_canvas.getHeight());
+        collectionButton->setPercentPosition(10, 40, m_canvas.getWidth(), m_canvas.getHeight());
         collectionButton->setHeight(100.f);
         collectionButton->setColor(sf::Color(0xB5DAF3FF));
         collectionButton->setOutlineThickness(2);
         collectionButton->setOutlineColor(sf::Color(0x0F0E00FF));
         collectionButton->onClick = [this](const sf::Event &event) {
+            auto joinServerElement{ std::find_if(
+                this->m_canvas.getChildren().begin(),
+                this->m_canvas.getChildren().end(),
+                getUIElementNameComparator("JoinServerPopUp")
+            ) };
+            joinServerElement->get()->setHidden(false);
             return true;
         };
-        collectionButton->setTextString("Collection");
+        collectionButton->setTextString("Join server");
         collectionButton->setCharacterSize(40);
         collectionButton->setTextColor(sf::Color(0x3E1507FF));
         collectionButton->setTextPressedColor(sf::Color(0x6E350FFF));
@@ -155,6 +172,7 @@ namespace nik {
         m_canvas.addChild(std::move(quitButton));
         m_canvas.addChild(std::move(controlsPopUp));
         m_canvas.addChild(std::move(hostServerPopUp));
+        m_canvas.addChild(std::move(joinServerPopUp));
     }
 
     std::unique_ptr<Scene> MenuScene::clone() const
