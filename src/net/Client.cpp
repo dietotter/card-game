@@ -37,8 +37,7 @@ namespace nik {
         }
 
         m_connected = true;
-        std::thread clientThread{ threadUpdate };
-        m_clientThread = std::move(clientThread);
+        m_clientThread = std::thread{ threadUpdate };
     }
 
     void Client::disconnect()

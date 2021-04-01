@@ -29,6 +29,7 @@ target_link_libraries(Nikcraft sfml-graphics sfml-network)
 
 target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/core-globals.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Scene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/SceneManager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/setup.cpp

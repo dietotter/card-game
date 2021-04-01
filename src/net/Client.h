@@ -1,6 +1,7 @@
 #pragma once
 
 #include "network-constants.h"
+#include "Server.h"
 
 #include <SFML/Network.hpp>
 
@@ -15,6 +16,8 @@ namespace nik {
     private:
         static std::thread m_clientThread;
         static sf::TcpSocket m_clientSocket;
+        static Server::EventsQueue m_incomingEvents;
+        static Server::EventsQueue m_outgoingEvents;
 
         static bool m_connected;
 

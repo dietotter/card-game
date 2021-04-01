@@ -2,12 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <ctime>
+#include <mutex>
 #include <random>
 
 namespace nik::glob {
 
     // mersenne twister for random stuff
-    static std::mt19937 mt{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
+    extern std::mt19937 mt;
+    // global mutex
+    extern std::mutex g_mutex;
 
 }
