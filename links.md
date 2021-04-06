@@ -1,5 +1,5 @@
 [Color scheme for menu](http://mycours.es/crc/F0541440)
 
-[Count lines of tracked files:](https://gist.github.com/mandiwise/dc53cb9da00856d7cdbb)
+Count lines of git-tracked files: `git ls-files | xargs wc -l`
 
-`git ls-files | xargs wc -l`
+Count lines of src directory files: `find ./src -print | xargs wc -l`

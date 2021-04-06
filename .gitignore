@@ -11,9 +11,3 @@ lib-build/
 
 # CLion build
 cmake-build-debug/
-
-# Uncomment these for the lines count command:
-data/
-fonts/
-images/
-lib/
