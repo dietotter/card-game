@@ -22,6 +22,10 @@ namespace nik {
     public:
         using EventsQueue = std::deque<std::unique_ptr<NetworkEvent>>;
 
+        // mutexes for in/out event queues
+        static std::mutex g_inMutex;
+        static std::mutex g_outMutex;
+
     private:
         // thread for incoming connections and packets
         static std::thread m_serverInThread;
@@ -34,9 +38,6 @@ namespace nik {
         
         // mutex is used for operations on m_clients list by different threads
         static std::mutex m_clientsMutex;
-        // TODO std::deque for m_receivedEventsQueue and m_eventsSendingQueue
-        // also, maybe separate class for NetworkEvents, with either inner "type" field, depending on which
-        // the handling will be performed, or visitor pattern (https://en.wikipedia.org/wiki/Visitor_pattern#Sources)
 
         static bool m_running;
 
@@ -49,5 +50,11 @@ namespace nik {
         static void outThreadUpdate();
 
         static bool isRunning() { return m_running; }
+
+        static EventsQueue& getIncomingEvents() { return m_incomingEvents; }
+        static EventsQueue& getOutgoingEvents() { return m_outgoingEvents; }
+        
+        static void sendEvent(std::unique_ptr<NetworkEvent> event);
+        static std::unique_ptr<NetworkEvent> retrieveIncomingEvent();
     };
 }

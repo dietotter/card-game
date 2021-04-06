@@ -2,8 +2,11 @@
 
 namespace nik {
 
-    std::thread Client::m_clientThread{};
+    std::thread Client::m_clientInThread{};
+    std::thread Client::m_clientOutThread{};
     sf::TcpSocket Client::m_clientSocket{};
+    Server::EventsQueue Client::m_incomingEvents;
+    Server::EventsQueue Client::m_outgoingEvents;
     bool Client::m_connected{};
     
     void Client::connectToServer(std::string connectionUrl)
@@ -37,35 +40,94 @@ namespace nik {
         }
 
         m_connected = true;
-        m_clientThread = std::thread{ threadUpdate };
+        m_clientInThread = std::thread{ inThreadUpdate };
+        m_clientOutThread = std::thread{ outThreadUpdate };
     }
 
     void Client::disconnect()
     {
         m_connected = false;
 
-        if (m_clientThread.joinable())
+        if (m_clientInThread.joinable())
         {
-            m_clientThread.join();
+            m_clientInThread.join();
+        }
+
+        if (m_clientOutThread.joinable())
+        {
+            m_clientOutThread.join();
         }
     }
 
-    void Client::threadUpdate()
+    void Client::inThreadUpdate()
     {
         sf::SocketSelector selector;
         selector.add(m_clientSocket);
 
-        while (m_connected)
+        while (isConnectedToServer())
         {
             if (selector.wait(sf::seconds(1.f)))
             {
                 if (selector.isReady(m_clientSocket))
                 {
+                    sf::Packet packet;
+                    if (m_clientSocket.receive(packet) == sf::Socket::Done)
+                    {
+                        sf::Uint8 type;
+                        packet >> type;
+
+                        std::lock_guard<std::mutex> guard(Server::g_inMutex);
+                        // create event depending on the event type, received from package
+                        m_incomingEvents.push_back(NetworkEvent::createEventByType(type));
+                        packet >> *m_incomingEvents.back();
+                    }
                 }
             }
         }
 
         m_clientSocket.disconnect();
+    }
+
+    void Client::outThreadUpdate()
+    {
+        while (isConnectedToServer())
+        {
+            Server::g_outMutex.lock();
+
+            if (m_outgoingEvents.empty())
+            {
+                continue;
+            }
+
+            NetworkEvent &event{ *(m_outgoingEvents.front()) };
+
+            sf::Packet outPacket;
+            outPacket << event;
+            m_outgoingEvents.pop_front();
+
+            Server::g_outMutex.unlock();
+
+            while (m_clientSocket.send(outPacket) == sf::Socket::Partial) {}
+        }
+    }
+
+    void Client::sendEvent(std::unique_ptr<NetworkEvent> event)
+    {
+        std::lock_guard<std::mutex> guard(Server::g_outMutex);
+        m_outgoingEvents.push_back(std::move(event));
+    }
+
+    std::unique_ptr<NetworkEvent> Client::retrieveIncomingEvent()
+    {
+        if (m_incomingEvents.empty())
+        {
+            return std::make_unique<NetworkEvent>(nullptr);
+        }
+
+        std::lock_guard<std::mutex> guard(Server::g_inMutex);
+        std::unique_ptr<NetworkEvent> nextEvent{ std::move(m_incomingEvents.front()) };
+        m_incomingEvents.pop_front();
+        return nextEvent;
     }
 
 }

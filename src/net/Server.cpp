@@ -1,6 +1,5 @@
 #include "Server.h"
 #include "events/ConnectionEvent.h"
-#include "../core-globals.h"
 
 #include <memory>
 #include <stdexcept>
@@ -8,8 +7,16 @@
 
 namespace nik {
 
+    std::mutex Server::g_inMutex;
+    std::mutex Server::g_outMutex;
+
     std::thread Server::m_serverInThread{};
+    std::thread Server::m_serverOutThread{};
     sf::TcpListener Server::m_listener{};
+    std::map<int, std::unique_ptr<sf::TcpSocket>> Server::m_clients{};
+    Server::EventsQueue Server::m_incomingEvents{};
+    Server::EventsQueue Server::m_outgoingEvents{};
+    std::mutex Server::m_clientsMutex{};
     bool Server::m_running{};
 
     void Server::listen(int port)
@@ -65,10 +72,20 @@ namespace nik {
                     if (m_listener.accept(*client) == sf::Socket::Done)
                     {
                         selector.add(*client);
-                        // RAII wrapper for mutex
-                        std::lock_guard<std::mutex> guard(m_clientsMutex);
+
+                        m_clientsMutex.lock();
                         m_clients.insert({++clientCounter, std::move(client)});
-                        std::cout << "KEK IS READY\n";
+                        m_clientsMutex.unlock();
+
+                        // create event to notify all clients about the new connection
+                        g_outMutex.lock();
+                        m_outgoingEvents.push_back(std::make_unique<ClientConnectedEvent>(clientCounter));
+                        g_outMutex.unlock();
+
+                        // create event for server to handle new connection
+                        g_inMutex.lock();
+                        m_incomingEvents.push_back(std::make_unique<ClientConnectedEvent>(clientCounter));
+                        g_inMutex.unlock();
                     }
                 }
                 else
@@ -78,11 +95,16 @@ namespace nik {
                         auto &client{ *clientPair.second };
                         if (selector.isReady(client))
                         {
-                            // TODO
                             sf::Packet packet;
                             if (client.receive(packet) == sf::Socket::Done)
                             {
-                                std::cout << "PACKET IS READY\n";
+                                sf::Uint8 type;
+                                packet >> type;
+
+                                std::lock_guard<std::mutex> guard(g_inMutex);
+                                // create event depending on the event type, received from package
+                                m_incomingEvents.push_back(NetworkEvent::createEventByType(type));
+                                packet >> *m_incomingEvents.back();
                             }
                         }
                     }
@@ -100,30 +122,69 @@ namespace nik {
     
     void Server::outThreadUpdate()
     {
-        // TODO TO FINISH
         while (isRunning())
         {
             // lock global mutex (also used for adding events to the queue),
-            // encode the next event in the queue into an outgoing packet,
+            // encode the next event in the queue (if it's not empty) into an outgoing packet,
             // remove the event from the queue, unlock the global mutex
-            glob::g_mutex.lock();
-            sf::Packet outPacket;
-            outPacket << *(m_outgoingEvents.front());
-            m_outgoingEvents.pop_front();
-            glob::g_mutex.unlock();
+            g_outMutex.lock();
 
-            // There probably should be some filtering logic (like the "recipient" field in NetworkEvent, probably),
-            // but left it for now
-            
-            // send the packet with our data to all connected clients
-            std::lock_guard<std::mutex> guard(m_clientsMutex);
-            for (auto &clientPair : m_clients)
+            if (m_outgoingEvents.empty())
             {
-                auto &client{ *clientPair.second };
-                client.send(outPacket);
-            } 
-            
+                continue;
+            }
+
+            NetworkEvent &event{ *(m_outgoingEvents.front()) };
+            int recipient{ event.getRecipient() };
+
+            sf::Packet outPacket;
+            outPacket << event;
+            m_outgoingEvents.pop_front();
+
+            g_outMutex.unlock();
+
+            // RAII wrapper for mutex
+            std::lock_guard<std::mutex> guard(m_clientsMutex);
+            // if event has recipient, send event to them, otherwise broadcast the event to everyone
+            if (recipient == NetworkEvent::allRecipients)
+            {
+                for (auto &clientPair : m_clients)
+                {
+                    auto &client{ *clientPair.second };
+                    // send the packet until it's sent completely
+                    while (client.send(outPacket) == sf::Socket::Partial) {}
+                }
+            }
+            else
+            {
+                auto clientIt{ m_clients.find(recipient) };
+                if (clientIt != m_clients.end())
+                {
+                    while (clientIt->second->send(outPacket) == sf::Socket::Partial) {}
+                }
+            }
         }
+    }
+
+    void Server::sendEvent(std::unique_ptr<NetworkEvent> event)
+    {
+        std::lock_guard<std::mutex> guard(g_outMutex);
+        m_outgoingEvents.push_back(std::move(event));
+    }
+
+    std::unique_ptr<NetworkEvent> Server::retrieveIncomingEvent()
+    {
+        if (m_incomingEvents.empty())
+        {
+            // decided not to throw error here, because this method would be triggering every tick,
+            // and from what I remember, stack unwinding and catching errors is expensive
+            return std::make_unique<NetworkEvent>(nullptr);
+        }
+
+        std::lock_guard<std::mutex> guard(g_inMutex);
+        std::unique_ptr<NetworkEvent> nextEvent{ std::move(m_incomingEvents.front()) };
+        m_incomingEvents.pop_front();
+        return nextEvent;
     }
     
 }

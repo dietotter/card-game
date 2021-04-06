@@ -12,17 +12,16 @@ namespace nik {
     protected:
         virtual void toPacket(sf::Packet &packet) const override
         {
-            packet << static_cast<sf::Uint8>(m_type) << m_clientId;
+            packet << m_clientId;
         }
 
         virtual void fromPacket(sf::Packet &packet) override
         {
-            sf::Uint8 type;
-            packet >> type >> m_clientId;
-            m_type = static_cast<Type>(type);
+            packet >> m_clientId;
         }
 
     public:
+        ClientConnectedEvent() = default;
         ClientConnectedEvent(sf::Uint8 clientId)
             : NetworkEvent{ Type::clientConnected }, m_clientId{ clientId }
         {
