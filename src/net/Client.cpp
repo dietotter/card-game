@@ -121,7 +121,7 @@ namespace nik {
     {
         if (m_incomingEvents.empty())
         {
-            return std::make_unique<NetworkEvent>(nullptr);
+            return nullptr;
         }
 
         std::lock_guard<std::mutex> guard(Server::g_inMutex);

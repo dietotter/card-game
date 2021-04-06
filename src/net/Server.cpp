@@ -178,7 +178,7 @@ namespace nik {
         {
             // decided not to throw error here, because this method would be triggering every tick,
             // and from what I remember, stack unwinding and catching errors is expensive
-            return std::make_unique<NetworkEvent>(nullptr);
+            return nullptr;
         }
 
         std::lock_guard<std::mutex> guard(g_inMutex);

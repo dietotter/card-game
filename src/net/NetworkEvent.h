@@ -22,8 +22,6 @@ namespace nik {
 
     protected:
         Type m_type;
-
-        NetworkEvent(Type type = Type::noType, int recipient = allRecipients): m_type{ type }, m_recipient{ recipient } {}
         
         // virtual functions that will be used by operator<< of sf::Packet (to put specific event data in/out)
         virtual void toPacket(sf::Packet &packet) const
@@ -39,7 +37,9 @@ namespace nik {
         }
 
     public:
-        virtual ~NetworkEvent();
+        NetworkEvent(Type type = Type::noType, int recipient = allRecipients): m_type{ type }, m_recipient{ recipient } {}
+        virtual ~NetworkEvent() {}
+
         Type getType() const { return m_type; }
         int getRecipient() const { return m_recipient; }
 
