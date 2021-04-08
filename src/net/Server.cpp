@@ -79,7 +79,7 @@ namespace nik {
 
                         // create event to notify all clients about the new connection
                         g_outMutex.lock();
-                        m_outgoingEvents.push_back(std::make_unique<ClientConnectedEvent>(clientCounter));
+                        m_outgoingEvents.push_back(std::make_unique<ClientConnectedEvent>(clientCounter, clientCounter));
                         g_outMutex.unlock();
 
                         // create event for server to handle new connection
@@ -98,8 +98,9 @@ namespace nik {
                             sf::Packet packet;
                             if (client.receive(packet) == sf::Socket::Done)
                             {
+                                sf::Packet packetCopy{ packet };
                                 sf::Uint8 type;
-                                packet >> type;
+                                packetCopy >> type;
 
                                 std::lock_guard<std::mutex> guard(g_inMutex);
                                 // create event depending on the event type, received from package
@@ -131,6 +132,7 @@ namespace nik {
 
             if (m_outgoingEvents.empty())
             {
+                g_outMutex.unlock();
                 continue;
             }
 
@@ -174,6 +176,7 @@ namespace nik {
 
     std::unique_ptr<NetworkEvent> Server::retrieveIncomingEvent()
     {
+        std::lock_guard<std::mutex> guard(g_inMutex);
         if (m_incomingEvents.empty())
         {
             // decided not to throw error here, because this method would be triggering every tick,
@@ -181,7 +184,6 @@ namespace nik {
             return nullptr;
         }
 
-        std::lock_guard<std::mutex> guard(g_inMutex);
         std::unique_ptr<NetworkEvent> nextEvent{ std::move(m_incomingEvents.front()) };
         m_incomingEvents.pop_front();
         return nextEvent;

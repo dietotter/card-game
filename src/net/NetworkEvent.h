@@ -12,12 +12,16 @@ namespace nik {
         enum class Type
         {
             noType,
-            clientConnected
+
+            clientConnected,
+
+            lobbyUpdatePlayersList
         };
 
         static inline constexpr int allRecipients{ -1 };
 
     private:
+        // TODO package recipient into packets too
         int m_recipient;
 
     protected:
@@ -26,14 +30,10 @@ namespace nik {
         // virtual functions that will be used by operator<< of sf::Packet (to put specific event data in/out)
         virtual void toPacket(sf::Packet &packet) const
         {
-            packet << static_cast<sf::Uint8>(m_type);
         }
         
         virtual void fromPacket(sf::Packet &packet)
         {
-            sf::Uint8 type;
-            packet >> type;
-            m_type = static_cast<NetworkEvent::Type>(type);
         }
 
     public:
@@ -53,12 +53,16 @@ namespace nik {
     // inline to avoid multiple definitions
     inline sf::Packet& operator<<(sf::Packet &packet, const NetworkEvent &event)
     {
+        packet << static_cast<sf::Uint8>(event.m_type);
         event.toPacket(packet);
         return packet;
     }
 
     inline sf::Packet& operator>>(sf::Packet &packet, NetworkEvent &event)
     {
+        sf::Uint8 type;
+        packet >> type;
+        event.m_type = static_cast<NetworkEvent::Type>(type);
         event.fromPacket(packet);
         return packet;
     }

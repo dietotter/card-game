@@ -43,7 +43,7 @@ namespace nik {
                     Client::connectToServer(inputString);
                 }
 
-                requestScene("Lobby", std::to_string(static_cast<int>(LobbyScene::LobbyViewType::client)));
+                requestScene("Lobby", std::to_string(static_cast<int>(NetworkScene::Role::client)));
             }
             catch (const std::exception &e)
             {

@@ -42,7 +42,9 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Player.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Client.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/NetworkEvent.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/net/NetworkScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Server.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/common/List.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/common/PopUp.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/core/Area.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ui/core/Button.cpp

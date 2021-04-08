@@ -1,9 +1,51 @@
 #include "LobbyScene.h"
 #include "../../core/Button.h"
+#include "../../core/Text.h"
 #include "../../../net/Client.h"
 #include "../../../net/Server.h"
+#include "../../../net/events/ConnectionEvent.h"
+#include "../../../net/events/LobbyEvent.h"
+
+#include <string>
 
 namespace nik {
+
+    void LobbyScene::clientEventUpdate(NetworkEvent *event)
+    {
+        if (event->getType() == NetworkEvent::Type::lobbyUpdatePlayersList)
+        {
+            auto *playersListEvent{ dynamic_cast<UpdatePlayersListEvent*>(event) };
+            if (playersListEvent)
+            {
+                auto playersIdList{ playersListEvent->getPlayersIdList() };
+                int i{ 1 };
+                for (auto id : playersIdList)
+                {
+                    std::string playerLabel{ "Player " + std::to_string(id) };
+                    if (id == Client::getIdOnServer())
+                    {
+                        playerLabel += " (you)";
+                    }
+                    m_canvas.addChild(std::make_unique<Text>(200, 300 + i * 100, playerLabel));
+                    ++i;
+                }
+            }
+        }
+    }
+
+    void LobbyScene::serverEventUpdate(NetworkEvent *event)
+    {
+        if (event->getType() == NetworkEvent::Type::clientConnected)
+        {
+            auto *connectedEvent{ dynamic_cast<ClientConnectedEvent*>(event) };
+            if (connectedEvent)
+            {
+                m_players.push_back(Player(connectedEvent->getClientId()));
+                Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
+                m_canvas.addChild(std::make_unique<Text>(200, 300 + m_players.size() * 100, "Player " + std::to_string(connectedEvent->getClientId())));
+            }
+        }
+    }
 
     void LobbyScene::inputUpdate(const sf::Event &event)
     {
@@ -39,9 +81,11 @@ namespace nik {
         quitButton->setTextPressedColor(sf::Color(0x929B22FF));
         quitButton->setTextStyle(sf::Text::Bold);
 
-        m_viewType = static_cast<LobbyViewType>(std::stoi(params));
-        if (m_viewType == LobbyViewType::server)
+        m_role = static_cast<Role>(std::stoi(params));
+        if (m_role == Role::server)
         {
+            m_canvas.addChild(std::make_unique<Text>(200, 300, "Player Server (you)"));
+
             quitButton->onClick = [this](const sf::Event &event) {
                 // TODO send some server closed event to connected clients
                 Server::stop();
@@ -49,8 +93,10 @@ namespace nik {
                 return true;
             };
         }
-        else if (m_viewType == LobbyViewType::client)
+        else if (m_role == Role::client)
         {
+            m_canvas.addChild(std::make_unique<Text>(200, 300, "Player Server"));
+
             quitButton->onClick = [this](const sf::Event &event) {
                 Client::disconnect();
                 this->m_requestScene("Menu", "");

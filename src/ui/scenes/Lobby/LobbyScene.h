@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../Scene.h"
+#include "../../../net/NetworkScene.h"
 #include "../../core/Area.h"
 #include "../../../game-core/Player.h"
 
@@ -8,15 +8,8 @@
 
 namespace nik {
 
-    class LobbyScene : public Scene
+    class LobbyScene : public NetworkScene
     {
-    public:
-        enum class LobbyViewType
-        {
-            server,
-            client
-        };
-
     private:
         Area m_canvas;
         std::vector<Player> m_players;
@@ -30,14 +23,14 @@ namespace nik {
         // 3. gamemode selection field (inactive for clients, server is selecting)
         // 4. ? "start game" available only on all players ready ("ready" button for clients) ?
 
-        LobbyViewType m_viewType;
-
     protected:
+        virtual void clientEventUpdate(NetworkEvent *event) override;
+        virtual void serverEventUpdate(NetworkEvent *event) override;
         virtual void inputUpdate(const sf::Event &event) override;
         virtual void graphicsUpdate() override;
 
     public:
-        LobbyScene(sf::RenderWindow &window, Scene::RequestSceneFunction requestScene): Scene{ window, requestScene, "Lobby" }
+        LobbyScene(sf::RenderWindow &window, Scene::RequestSceneFunction requestScene): NetworkScene{ window, requestScene, "Lobby" }
         {
         }
 

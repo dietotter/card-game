@@ -21,6 +21,8 @@ namespace nik {
         static Server::EventsQueue m_outgoingEvents;
 
         static bool m_connected;
+        // id of this client on the connected server
+        static int m_idOnServer;
 
     public:
         static void connectToServer(std::string connectionUrl = ("localhost:" + std::to_string(cnst::defaultServerPort)));
@@ -30,6 +32,7 @@ namespace nik {
         static void outThreadUpdate();
 
         static bool isConnectedToServer() { return m_connected; }
+        static int getIdOnServer() { return m_idOnServer; }
 
         static Server::EventsQueue& getIncomingEvents() { return m_incomingEvents; }
         static Server::EventsQueue& getOutgoingEvents() { return m_outgoingEvents; }

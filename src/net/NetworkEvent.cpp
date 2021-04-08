@@ -1,5 +1,6 @@
 #include "NetworkEvent.h"
 #include "events/ConnectionEvent.h"
+#include "events/LobbyEvent.h"
 
 namespace nik {
 
@@ -10,6 +11,9 @@ namespace nik {
         {
         case Type::clientConnected:
             return std::make_unique<ClientConnectedEvent>();
+
+        case Type::lobbyUpdatePlayersList:
+            return std::make_unique<UpdatePlayersListEvent>();
         
         default:
             return std::make_unique<NetworkEvent>();

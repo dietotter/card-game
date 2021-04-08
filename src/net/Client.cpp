@@ -1,4 +1,6 @@
 #include "Client.h"
+#include "events/ConnectionEvent.h"
+#include "../core-globals.h"
 
 namespace nik {
 
@@ -8,6 +10,7 @@ namespace nik {
     Server::EventsQueue Client::m_incomingEvents;
     Server::EventsQueue Client::m_outgoingEvents;
     bool Client::m_connected{};
+    int Client::m_idOnServer{};
     
     void Client::connectToServer(std::string connectionUrl)
     {
@@ -73,8 +76,21 @@ namespace nik {
                     sf::Packet packet;
                     if (m_clientSocket.receive(packet) == sf::Socket::Done)
                     {
+                        sf::Packet packetCopy{ packet };
                         sf::Uint8 type;
-                        packet >> type;
+                        packetCopy >> type;
+
+                        // client connected event is only going to be sent to client
+                        // as a confirmation and id assignment
+                        if (type == static_cast<sf::Uint8>(NetworkEvent::Type::clientConnected))
+                        {
+                            // ? not sure about the global mutex usage here ?
+                            std::lock_guard<std::mutex> guard(glob::g_mutex);
+                            ClientConnectedEvent event{};
+                            packet >> event;
+                            m_idOnServer = event.getClientId();
+                            continue;
+                        }
 
                         std::lock_guard<std::mutex> guard(Server::g_inMutex);
                         // create event depending on the event type, received from package
@@ -96,6 +112,7 @@ namespace nik {
 
             if (m_outgoingEvents.empty())
             {
+                Server::g_outMutex.unlock();
                 continue;
             }
 

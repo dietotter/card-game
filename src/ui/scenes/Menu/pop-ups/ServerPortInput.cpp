@@ -44,7 +44,7 @@ namespace nik {
                     Server::listen(port);
                 }
 
-                requestScene("Lobby", std::to_string(static_cast<int>(LobbyScene::LobbyViewType::server)));
+                requestScene("Lobby", std::to_string(static_cast<int>(NetworkScene::Role::server)));
             }
             catch (const std::exception &e)
             {
