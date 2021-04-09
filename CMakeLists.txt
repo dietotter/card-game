@@ -39,7 +39,6 @@ target_sources(Nikcraft PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Die.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/GameScene.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Hand.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/game-core/Player.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/Client.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/NetworkEvent.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/NetworkScene.cpp

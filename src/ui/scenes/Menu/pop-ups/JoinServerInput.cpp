@@ -26,10 +26,13 @@ namespace nik {
         // try to start server with entered port, when Enter is pressed on port input
         urlInput->onEnterPress = [this, requestScene](const std::string &inputString) {
             // remove previous exception message, if such existed
-            std::remove_if(
-                m_childrenList.begin(),
-                m_childrenList.end(),
-                getUIElementNameComparator("JoinServerException")
+            m_childrenList.erase(
+                std::remove_if(
+                    m_childrenList.begin(),
+                    m_childrenList.end(),
+                    getUIElementNameComparator("JoinServerException")
+                ),
+                m_childrenList.end()
             );
 
             try

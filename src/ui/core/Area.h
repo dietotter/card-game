@@ -21,6 +21,9 @@ namespace nik {
         Area(int x, int y, float width = 0, float height = 0);
         Area(const Area &area);
 
+        void setOutlineColor(const sf::Color &color) { m_rect.setOutlineColor(color); }
+        void setOutlineThickness(int thickness) { m_rect.setOutlineThickness(thickness); }
+
         virtual void setColor(const sf::Color &color) override;
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
     };

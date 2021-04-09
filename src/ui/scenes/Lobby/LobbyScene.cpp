@@ -17,18 +17,15 @@ namespace nik {
             auto *playersListEvent{ dynamic_cast<UpdatePlayersListEvent*>(event) };
             if (playersListEvent)
             {
+                m_players.clear();
+                
                 auto playersIdList{ playersListEvent->getPlayersIdList() };
-                int i{ 1 };
                 for (auto id : playersIdList)
                 {
-                    std::string playerLabel{ "Player " + std::to_string(id) };
-                    if (id == Client::getIdOnServer())
-                    {
-                        playerLabel += " (you)";
-                    }
-                    m_canvas.addChild(std::make_unique<Text>(200, 300 + i * 100, playerLabel));
-                    ++i;
+                    m_players.push_back({id});
                 }
+
+                updatePlayersList();
             }
         }
     }
@@ -42,7 +39,32 @@ namespace nik {
             {
                 m_players.push_back(Player(connectedEvent->getClientId()));
                 Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
-                m_canvas.addChild(std::make_unique<Text>(200, 300 + m_players.size() * 100, "Player " + std::to_string(connectedEvent->getClientId())));
+                addPlayerToList("Player " + std::to_string(connectedEvent->getClientId()));
+            }
+        }
+
+        if (event->getType() == NetworkEvent::Type::clientDisconnected)
+        {
+            auto *disconnectedEvent{ dynamic_cast<ClientDisconnectedEvent*>(event) };
+            if (disconnectedEvent)
+            {
+                int id{ disconnectedEvent->getClientId() };
+                // erase-remove idiom (see links)
+                // https://stackoverflow.com/questions/22729906/stdremove-if-not-working-properly
+                // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
+                // https://ps-group.github.io/cxx/cxx_remove_if
+                m_players.erase(
+                    std::remove_if(
+                        m_players.begin(),
+                        m_players.end(),
+                        [id](const Player &player) {
+                            return player.getId() == id;
+                        }
+                    ),
+                    m_players.end()
+                );
+                Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
+                removePlayerFromList("Player " + std::to_string(disconnectedEvent->getClientId()));
             }
         }
     }
@@ -71,7 +93,7 @@ namespace nik {
         m_canvas.setPercentSize(100, 100, windowSize.x, windowSize.y);
         m_canvas.setColor(sf::Color(0x281903FF));
 
-        auto quitButton { std::make_unique<Button>(50, 50, 700, 100) };
+        auto quitButton{ std::make_unique<Button>(50, 50, 700, 100) };
         quitButton->setColor(sf::Color(0x550D08FF));
         quitButton->setOutlineThickness(2);
         quitButton->setOutlineColor(sf::Color(0x3E1507FF));
@@ -81,10 +103,14 @@ namespace nik {
         quitButton->setTextPressedColor(sf::Color(0x929B22FF));
         quitButton->setTextStyle(sf::Text::Bold);
 
+        auto playersList{ std::make_unique<List>(400) };
+        playersList->setPosition(50, 200);
+        playersList->setName("PlayersList");
+
         m_role = static_cast<Role>(std::stoi(params));
         if (m_role == Role::server)
         {
-            m_canvas.addChild(std::make_unique<Text>(200, 300, "Player Server (you)"));
+            playersList->addItem("Player Server (you)");
 
             quitButton->onClick = [this](const sf::Event &event) {
                 // TODO send some server closed event to connected clients
@@ -95,7 +121,7 @@ namespace nik {
         }
         else if (m_role == Role::client)
         {
-            m_canvas.addChild(std::make_unique<Text>(200, 300, "Player Server"));
+            playersList->addItem("Player Server");
 
             quitButton->onClick = [this](const sf::Event &event) {
                 Client::disconnect();
@@ -104,12 +130,68 @@ namespace nik {
             };
         }
 
+        m_canvas.addChild(std::move(playersList));
         m_canvas.addChild(std::move(quitButton));
     }
 
     std::unique_ptr<Scene> LobbyScene::clone() const
     {
         return std::make_unique<LobbyScene>(*this);
+    }
+
+    List* LobbyScene::getPlayersListElement()
+    {
+        auto playersList{ std::find_if(
+            this->m_canvas.getChildren().begin(),
+            this->m_canvas.getChildren().end(),
+            getUIElementNameComparator("PlayersList")
+        ) };
+
+        return dynamic_cast<List*>(playersList->get());
+    }
+
+    void LobbyScene::updatePlayersList()
+    {
+        List *playersList{ getPlayersListElement() };
+
+        if (playersList)
+        {
+            std::vector<std::string> playerLabels;
+            playerLabels.push_back(m_role == Role::server ? "Player Server (you)" : "Player Server");
+            
+            for (auto &player : m_players)
+            {
+                std::string playerLabel{ "Player " + std::to_string(player.getId()) };
+                if (player.getId() == Client::getIdOnServer())
+                {
+                    playerLabel += " (you)";
+                }
+
+                playerLabels.push_back(playerLabel);
+            }
+
+            playersList->updateList(playerLabels);
+        }
+    }
+
+    void LobbyScene::addPlayerToList(const std::string &label)
+    {
+        List *playersList{ getPlayersListElement() };
+
+        if (playersList)
+        {
+            playersList->addItem(label);
+        }
+    }
+
+    void LobbyScene::removePlayerFromList(const std::string &label)
+    {
+        List *playersList{ getPlayersListElement() };
+
+        if (playersList)
+        {
+            playersList->removeItem(label);
+        }
     }
     
 }

@@ -14,6 +14,7 @@ namespace nik {
             noType,
 
             clientConnected,
+            clientDisconnected,
 
             lobbyUpdatePlayersList
         };

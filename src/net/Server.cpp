@@ -77,7 +77,7 @@ namespace nik {
                         m_clients.insert({++clientCounter, std::move(client)});
                         m_clientsMutex.unlock();
 
-                        // create event to notify all clients about the new connection
+                        // send event to connected client to tell them the assigned id
                         g_outMutex.lock();
                         m_outgoingEvents.push_back(std::make_unique<ClientConnectedEvent>(clientCounter, clientCounter));
                         g_outMutex.unlock();
@@ -90,12 +90,14 @@ namespace nik {
                 }
                 else
                 {
-                    for (auto &clientPair : m_clients)
+                    // auto &clientPair : m_clients
+                    for (auto it = m_clients.begin(); it != m_clients.end(); ++it)
                     {
-                        auto &client{ *clientPair.second };
+                        auto &client{ *(it->second) };
                         if (selector.isReady(client))
                         {
                             sf::Packet packet;
+                            // handle receiving packet from client
                             if (client.receive(packet) == sf::Socket::Done)
                             {
                                 sf::Packet packetCopy{ packet };
@@ -106,6 +108,27 @@ namespace nik {
                                 // create event depending on the event type, received from package
                                 m_incomingEvents.push_back(NetworkEvent::createEventByType(type));
                                 packet >> *m_incomingEvents.back();
+                            }
+
+                            // handle client disconnection
+                            if (client.receive(packet) == sf::Socket::Disconnected)
+                            {
+                                selector.remove(client);
+                                client.disconnect();
+
+                                m_clientsMutex.lock();
+                                m_clients.erase(it);
+                                m_clientsMutex.unlock();
+                                
+                                // create new disconnection event for server to handle in scenes
+                                std::lock_guard<std::mutex> guard(g_inMutex);
+                                m_incomingEvents.push_back(std::make_unique<ClientDisconnectedEvent>( it->first ));
+
+                                // not decrementing a counter, because it could be not the last player, who disconnected
+                                // also, might be useful to not decrement a counter when implementing reconnection
+                                
+                                // break because "erase" invalidates iterator
+                                break;
                             }
                         }
                     }

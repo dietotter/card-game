@@ -12,6 +12,9 @@ namespace nik {
         case Type::clientConnected:
             return std::make_unique<ClientConnectedEvent>();
 
+        case Type::clientDisconnected:
+            return std::make_unique<ClientDisconnectedEvent>();
+
         case Type::lobbyUpdatePlayersList:
             return std::make_unique<UpdatePlayersListEvent>();
         

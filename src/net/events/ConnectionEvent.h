@@ -30,5 +30,30 @@ namespace nik {
 
         int getClientId() const { return m_clientId; }
     };
+
+    class ClientDisconnectedEvent : public NetworkEvent
+    {
+    private:
+        sf::Uint8 m_clientId{};
+
+    protected:
+        virtual void toPacket(sf::Packet &packet) const override
+        {
+            packet << m_clientId;
+        }
+
+        virtual void fromPacket(sf::Packet &packet) override
+        {
+            packet >> m_clientId;
+        }
+
+    public:
+        ClientDisconnectedEvent(sf::Uint8 clientId = 0, int recipient = NetworkEvent::allRecipients)
+            : NetworkEvent{ Type::clientDisconnected, recipient }, m_clientId{ clientId }
+        {
+        }
+
+        int getClientId() const { return m_clientId; }
+    };
     
 }
