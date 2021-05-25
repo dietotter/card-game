@@ -14,7 +14,7 @@ namespace nik {
         bool m_ready{ false };
     
     public:
-        Player(int id): m_id { id }
+        Player(int id, bool ready = false): m_id { id }, m_ready{ ready }
         {
         }
 
@@ -22,6 +22,7 @@ namespace nik {
         const std::string& getDeckString() const { return m_deckString; }
         void setDeckString(const std::string &deckString) { m_deckString = deckString; }
         bool isReady() const { return m_ready; }
+        void setReady(bool ready) { m_ready = ready; }
         void flipReady() { m_ready = !m_ready; }
     };
 }

@@ -16,7 +16,8 @@ namespace nik {
             clientConnected,
             clientDisconnected,
 
-            lobbyUpdatePlayersList
+            lobbyUpdatePlayersList,
+            lobbyPlayerReady
         };
 
         static inline constexpr int allRecipients{ -1 };

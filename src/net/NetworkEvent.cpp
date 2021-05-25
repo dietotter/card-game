@@ -17,6 +17,9 @@ namespace nik {
 
         case Type::lobbyUpdatePlayersList:
             return std::make_unique<UpdatePlayersListEvent>();
+
+        case Type::lobbyPlayerReady:
+            return std::make_unique<PlayerReadyEvent>();
         
         default:
             return std::make_unique<NetworkEvent>();

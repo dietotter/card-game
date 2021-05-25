@@ -18,11 +18,10 @@ namespace nik {
             if (playersListEvent)
             {
                 m_players.clear();
-                
-                auto playersIdList{ playersListEvent->getPlayersIdList() };
-                for (auto id : playersIdList)
+
+                for (auto [id, ready] : playersListEvent->getPlayersList())
                 {
-                    m_players.push_back({id});
+                    m_players.push_back({id, ready});
                 }
 
                 updatePlayersList();
@@ -64,7 +63,33 @@ namespace nik {
                     m_players.end()
                 );
                 Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
-                removePlayerFromList("Player " + std::to_string(disconnectedEvent->getClientId()));
+
+                std::string playerLabel{ "Player " + std::to_string(disconnectedEvent->getClientId()) };
+
+                removePlayerFromList(playerLabel);
+            }
+        }
+
+        if (event->getType() == NetworkEvent::Type::lobbyPlayerReady)
+        {
+            auto *playerReadyEvent{ dynamic_cast<PlayerReadyEvent*>(event) };
+            if (playerReadyEvent)
+            {                
+                auto playerId{ playerReadyEvent->getPlayerId() };
+                Player &player{ *std::find_if(
+                    m_players.begin(),
+                    m_players.end(),
+                    [playerId](const Player &player) {
+                        return player.getId() == playerId;
+                    }
+                ) };
+
+                player.setReady(playerReadyEvent->isReady());
+                player.setDeckString(playerReadyEvent->getDeckString());
+
+                Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
+
+                updatePlayersList();
             }
         }
     }
@@ -128,6 +153,33 @@ namespace nik {
                 this->m_requestScene("Menu", "");
                 return true;
             };
+
+            auto readyButton{ std::make_unique<Button>(800, 50, 700, 100) };
+            readyButton->setColor(sf::Color(0x550D08FF));
+            readyButton->setOutlineThickness(2);
+            readyButton->setOutlineColor(sf::Color(0x3E1507FF));
+            readyButton->setTextString("Ready");
+            readyButton->setCharacterSize(40);
+            readyButton->setTextColor(sf::Color(0xD6E0FDFF));
+            readyButton->setTextPressedColor(sf::Color(0x929B22FF));
+            readyButton->setTextStyle(sf::Text::Bold);
+
+            readyButton->onClick = [this](const sf::Event &event) {
+                auto id{ Client::getIdOnServer() };
+                auto &player{ *std::find_if(
+                    this->m_players.begin(),
+                    this->m_players.end(),
+                    [id](const Player &player) {
+                        return player.getId() == id;
+                    }
+                ) };
+
+                Client::sendEvent(std::make_unique<PlayerReadyEvent>(id, !player.isReady()));
+
+                return true;
+            };
+
+            m_canvas.addChild(std::move(readyButton));
         }
 
         m_canvas.addChild(std::move(playersList));
@@ -161,7 +213,7 @@ namespace nik {
             
             for (auto &player : m_players)
             {
-                std::string playerLabel{ "Player " + std::to_string(player.getId()) };
+                std::string playerLabel{ "Player " + std::to_string(player.getId()) + (player.isReady() ? " - READY" : "") };
                 if (player.getId() == Client::getIdOnServer())
                 {
                     playerLabel += " (you)";
@@ -191,6 +243,8 @@ namespace nik {
         if (playersList)
         {
             playersList->removeItem(label);
+            // TODO need to move these string values to be inline constexpr in some header
+            playersList->removeItem(label + " - READY");
         }
     }
     
