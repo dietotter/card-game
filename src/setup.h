@@ -20,4 +20,5 @@ namespace nik::setup
     Deck loadDeckFromString(const std::string &deckString);
     std::string loadDeckStringFromFile(const std::string &filename);
     std::string convertDeckToString(const Deck &deck);
+    std::vector<std::string> loadDeckList();
 }

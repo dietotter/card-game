@@ -6,6 +6,7 @@
 #include <exception>
 #include <stdexcept>
 #include <regex>
+#include <filesystem>
 
 namespace nik::setup {
 
@@ -322,6 +323,18 @@ namespace nik::setup {
         }
 
         return deckString;
+    }
+
+    std::vector<std::string> loadDeckList()
+    {
+        std::vector<std::string> deckList;
+        for (const auto &entry : std::filesystem::directory_iterator(cnst::deckFolderPath))
+        {
+            // stem() returns only the filename without extension
+            deckList.push_back(entry.path().stem());
+        }
+
+        return deckList;
     }
 
 }

@@ -22,7 +22,7 @@ namespace nik {
     {
         m_color = color;
         
-        if (!m_focused)
+        if (!isFocused())
         {
             m_rect.setFillColor(color);
         }
@@ -32,7 +32,7 @@ namespace nik {
     {
         m_focusedColor = color;
         
-        if (m_focused)
+        if (isFocused())
         {
             m_rect.setFillColor(color);
         }
@@ -42,7 +42,7 @@ namespace nik {
     {
         m_outlineColor = color;
         
-        if (!m_focused)
+        if (!isFocused())
         {
             m_rect.setOutlineColor(color);
         }
@@ -52,7 +52,7 @@ namespace nik {
     {
         m_outlineFocusedColor = color;
         
-        if (m_focused)
+        if (isFocused())
         {
             m_rect.setOutlineColor(color);
         }
@@ -62,7 +62,7 @@ namespace nik {
     {
         m_outlineThickness = thickness;
 
-        if (!m_focused)
+        if (!isFocused())
         {
             m_rect.setOutlineThickness(thickness);
         }
@@ -72,7 +72,7 @@ namespace nik {
     {
         m_outlineFocusedThickness = thickness;
 
-        if (m_focused)
+        if (isFocused())
         {
             m_rect.setOutlineThickness(thickness);
         }
@@ -127,26 +127,20 @@ namespace nik {
         {
             if (contains(event.mouseButton.x, event.mouseButton.y))
             {
-                if (!m_focused)
+                if (!isFocused())
                 {
-                    m_focused = true;
-                    m_rect.setFillColor(m_focusedColor);
-                    m_rect.setOutlineColor(m_outlineFocusedColor);
-                    m_rect.setOutlineThickness(m_outlineFocusedThickness);
+                    setFocused();
                 }
             
                 return onClick(event);
             }
-            else if (!contains(event.mouseButton.x, event.mouseButton.y) && m_focused)
+            else if (!contains(event.mouseButton.x, event.mouseButton.y) && isFocused())
             {
-                m_focused = false;
-                m_rect.setFillColor(m_color);
-                m_rect.setOutlineColor(m_outlineColor);
-                m_rect.setOutlineThickness(m_outlineThickness);
+                setFocused(false);
             }
         }
 
-        if (event.type == sf::Event::KeyPressed && m_focused)
+        if (event.type == sf::Event::KeyPressed && isFocused())
         {
             // TODO make this OS-dependent (control for windows, cmd for mac)
             if (event.key.system && event.key.code == sf::Keyboard::V)
@@ -160,7 +154,7 @@ namespace nik {
             }
         }
 
-        if (event.type == sf::Event::TextEntered && m_focused)
+        if (event.type == sf::Event::TextEntered && isFocused())
         {
             // Backspace
             if (event.text.unicode == 8)
@@ -201,6 +195,24 @@ namespace nik {
         setOutlineColor(sf::Color{ 200, 200, 200, 255 });
         setOutlineFocusedThickness(2);
         setOutlineFocusedColor(sf::Color::Blue);
+    }
+
+    void TextInput::setFocused(bool focused)
+    {
+        if (focused)
+        {
+            m_focused = true;
+            m_rect.setFillColor(m_focusedColor);
+            m_rect.setOutlineColor(m_outlineFocusedColor);
+            m_rect.setOutlineThickness(m_outlineFocusedThickness);
+            
+            return;
+        }
+
+        m_focused = false;
+        m_rect.setFillColor(m_color);
+        m_rect.setOutlineColor(m_outlineColor);
+        m_rect.setOutlineThickness(m_outlineThickness);
     }
 
     std::unique_ptr<UIElement> TextInput::clone() const

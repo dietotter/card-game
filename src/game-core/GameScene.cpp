@@ -44,7 +44,7 @@ namespace nik {
     {   
         auto &library{ setup::getLibrary() };
 
-        Deck deck{ setup::loadDeckFromFile("data/deck1.dat") };
+        Deck deck{ setup::loadDeckFromFile("data/decks/deck1.dat") };
         auto deckPtr1{ std::make_unique<Deck>(deck) };
         auto deckPtr2{ std::make_unique<Deck>(deck) };
         m_board.addObject(std::move(deckPtr1));

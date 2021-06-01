@@ -22,12 +22,14 @@ namespace nik {
         sf::Color m_outlineFocusedColor;
         float m_outlineThickness{};
         float m_outlineFocusedThickness{};
-        
+
         bool m_focused{};
 
         void setDefaultStyle();
 
     protected:
+        void setFocused(bool focused = true);
+
         virtual void adjustDrawingSize() override;
         virtual std::unique_ptr<UIElement> clone() const override;
 
@@ -58,6 +60,7 @@ namespace nik {
 
         const sf::String& getString() const { return m_inputText.getString(); }
         bool isEmpty() const { return getString().isEmpty(); }
+        bool isFocused() const { return m_focused; }
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
         virtual bool handleEvent(const sf::Event &event) override;

@@ -1,12 +1,16 @@
 #include "LobbyScene.h"
+#include "../../common/SelectionField.h"
 #include "../../core/Button.h"
 #include "../../core/Text.h"
 #include "../../../net/Client.h"
 #include "../../../net/Server.h"
 #include "../../../net/events/ConnectionEvent.h"
 #include "../../../net/events/LobbyEvent.h"
+#include "../../../setup.h"
 
 #include <string>
+#include <iostream>
+#include <filesystem>
 
 namespace nik {
 
@@ -132,6 +136,13 @@ namespace nik {
         playersList->setPosition(50, 200);
         playersList->setName("PlayersList");
 
+        auto deckSelectionField{ std::make_unique<SelectionField>(500, 200, 400, 50) };
+        deckSelectionField->setName("DeckSelectionField");
+        deckSelectionField->setOptions(setup::loadDeckList());
+        deckSelectionField->setPlaceholderString("Choose your deck");
+        // TODO BUG: need to do this because without it styles do not apply to the field
+        deckSelectionField->setWidth(400);
+
         m_role = static_cast<Role>(std::stoi(params));
         if (m_role == Role::server)
         {
@@ -183,6 +194,7 @@ namespace nik {
         }
 
         m_canvas.addChild(std::move(playersList));
+        m_canvas.addChild(std::move(deckSelectionField));
         m_canvas.addChild(std::move(quitButton));
     }
 

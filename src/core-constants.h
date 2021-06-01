@@ -2,6 +2,8 @@
 
 namespace nik::cnst {
 
+    inline constexpr char deckFolderPath[]{ "data/decks" };
+
     inline constexpr int screenWidth{ 1920 };
     inline constexpr int screenHeight{ 1080 };
 
