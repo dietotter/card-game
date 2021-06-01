@@ -45,9 +45,13 @@ namespace nik {
                 if (it + 1 == m_childrenList.rend() && event.type == sf::Event::MouseButtonReleased)
                 {  
                     auto optionsList{ dynamic_cast<List*>((*it).get()) };
-                    setString(optionsList->getSelectedItem());
-                    optionsList->setHidden(true);
-                    setFocused(false);
+
+                    if (optionsList)
+                    {
+                        setString(optionsList->getSelectedItem());
+                        optionsList->setHidden(true);
+                        setFocused(false);
+                    }
                 }
 
                 return true;

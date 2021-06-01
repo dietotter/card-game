@@ -6,6 +6,7 @@
 #include "../../../net/Server.h"
 #include "../../../net/events/ConnectionEvent.h"
 #include "../../../net/events/LobbyEvent.h"
+#include "../../../core-constants.h"
 #include "../../../setup.h"
 
 #include <string>
@@ -185,7 +186,28 @@ namespace nik {
                     }
                 ) };
 
-                Client::sendEvent(std::make_unique<PlayerReadyEvent>(id, !player.isReady()));
+                auto deckSelectionIt{ std::find_if(
+                    this->m_canvas.getChildren().begin(),
+                    this->m_canvas.getChildren().end(),
+                    getUIElementNameComparator("DeckSelectionField")
+                ) };
+
+                auto deckSelectionField{ dynamic_cast<SelectionField*>(deckSelectionIt->get()) };
+
+                // if player tries to press ready when he hasn't selected a deck, nothing happens
+                // (or if dynamic cast was unsuccessful)
+                // TODO probably ready button should be disabled instead
+                if (!deckSelectionField || (!player.isReady() && deckSelectionField->getString().isEmpty()))
+                {
+                    // TODO should notify user that he needs to select a deck
+                    return true;
+                }
+
+                auto deckString{ setup::loadDeckStringFromFile(
+                    cnst::deckFolderPath + deckSelectionField->getString() + cnst::deckFileFormat
+                ) };
+
+                Client::sendEvent(std::make_unique<PlayerReadyEvent>(id, !player.isReady(), deckString));
 
                 return true;
             };
