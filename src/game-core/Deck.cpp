@@ -112,7 +112,7 @@ namespace nik {
         return true;
     }
     
-    bool Deck::handleEvent(const sf::Event &event, Board &board)
+    bool Deck::handleEvent(const sf::Event &event, Board &board, Role role)
     {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
         {

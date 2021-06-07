@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "game-core/GameScene.h"
+#include "game-scenes/OnlineGame/OnlineGameScene.h"
 #include "ui/scenes/Lobby/LobbyScene.h"
 #include "ui/scenes/Menu/MenuScene.h"
 
@@ -11,6 +12,7 @@ namespace nik {
         m_sceneMap.insert({"Game", std::make_unique<GameScene>(window, requestSceneChange)});
         m_sceneMap.insert({"Lobby", std::make_unique<LobbyScene>(window, requestSceneChange)});
         m_sceneMap.insert({"Menu", std::make_unique<MenuScene>(window, requestSceneChange)});
+        m_sceneMap.insert({"OnlineGame", std::make_unique<OnlineGameScene>(window, requestSceneChange)});
         setCurrentScene("Menu");
     }
 

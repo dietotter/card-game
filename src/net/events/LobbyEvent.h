@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../NetworkEvent.h"
-#include "../../game-core/Player.h"
+#include "../../ui/scenes/Lobby/LobbyPlayer.h"
 
 #include <string>
 #include <map>
@@ -40,7 +40,7 @@ namespace nik {
         {
         }
 
-        UpdatePlayersListEvent(const std::vector<Player> &playersList, int recipient = NetworkEvent::allRecipients)
+        UpdatePlayersListEvent(const std::vector<LobbyPlayer> &playersList, int recipient = NetworkEvent::allRecipients)
             : NetworkEvent{ Type::lobbyUpdatePlayersList, recipient }
         {
             for (auto &player : playersList)
@@ -79,6 +79,31 @@ namespace nik {
         int getPlayerId() const { return m_playerId; }
         bool isReady() const { return m_ready; }
         const std::string& getDeckString() const { return m_deckString; }
+    };
+
+    class StartGameEvent : public NetworkEvent
+    {
+    private:
+        std::string m_params;
+
+    protected:
+        virtual void toPacket(sf::Packet &packet) const override
+        {
+            packet << m_params;
+        }
+
+        virtual void fromPacket(sf::Packet &packet) override
+        {
+            packet >> m_params;
+        }
+
+    public:
+        StartGameEvent(const std::string &params = "", int recipient = NetworkEvent::allRecipients)
+            : NetworkEvent{ Type::lobbyStartGame, recipient }, m_params{ params }
+        {
+        }
+
+        const std::string& getParams() const { return m_params; }
     };
     
 }

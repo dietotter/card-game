@@ -13,6 +13,8 @@ namespace nik {
 
     class Deck : public GameObject
     {
+        using Role = GameObject::Role;
+
     private:
         std::vector<Card> m_cardList;
 
@@ -29,6 +31,7 @@ namespace nik {
 
         std::size_t size() const { return m_cardList.size(); }
         bool isEmpty() const { return m_cardList.empty(); }
+        std::vector<Card>& getCardList() { return m_cardList; }
         const std::vector<Card>& getCardList() const { return m_cardList; }
 
         Deck& operator=(const Deck &deck);
@@ -37,7 +40,7 @@ namespace nik {
         virtual bool contains(int x, int y) const override;
         virtual bool onSelect(const sf::Event &event, Board &board) override;
         virtual bool onRelease(const sf::Event &event, Board &board) override;
-        virtual bool handleEvent(const sf::Event &event, Board &board) override;
+        virtual bool handleEvent(const sf::Event &event, Board &board, Role role = Role::offline) override;
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

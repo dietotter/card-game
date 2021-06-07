@@ -8,21 +8,19 @@ namespace nik {
     {
     private:
         int m_id{};
-
-        // for lobby (? maybe should have different class for lobby player ?)
-        std::string m_deckString;
-        bool m_ready{ false };
+        std::string m_name{};
+        int m_positionOnTable{};
     
     public:
-        Player(int id, bool ready = false): m_id { id }, m_ready{ ready }
+        Player(int id, int positionOnTable = 0, const std::string &name = "")
+            : m_id{ id }, m_positionOnTable{ positionOnTable }, m_name{ name }
         {
         }
 
         int getId() const { return m_id; }
-        const std::string& getDeckString() const { return m_deckString; }
-        void setDeckString(const std::string &deckString) { m_deckString = deckString; }
-        bool isReady() const { return m_ready; }
-        void setReady(bool ready) { m_ready = ready; }
-        void flipReady() { m_ready = !m_ready; }
+        const std::string& getName() const { return m_name; }
+        void setName(const std::string &name) { m_name = name; }
+        const int getPositionOnTable() const { return m_positionOnTable; }
+        void setPositionOnTable(int positionOnTable) { m_positionOnTable = positionOnTable; }
     };
 }

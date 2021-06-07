@@ -3,24 +3,27 @@
 #include "Deck.h"
 #include "Die.h"
 #include "Hand.h"
+#include "game-constants.h"
 #include "../core-constants.h"
 #include "../setup.h"
+#include "../net/network-constants.h"
+#include "../net/Client.h"
+#include "../net/Server.h"
 
 #include <algorithm>
 
 namespace nik {
-
-    Board::Board(): m_backgroundColor{ cnst::boardBackgroundColor }
-    {
-    }
 
     Board::Board(const Board &board)
     {
         deepCopy(board);
     }
 
-    bool Board::handleEvent(const sf::Event &event)
+    bool Board::handleEvent(const sf::Event &event, Role role)
     {
+        // TODO implement special case for offline role (when I know how exactly I wanna do it)
+        int playerId{ role == Role::client ? Client::getIdOnServer() : cnst::serverDefaultId };
+
         if (event.type == sf::Event::MouseButtonPressed)
         {
             // not using reverse iterator because of the std::rotate
@@ -28,6 +31,13 @@ namespace nik {
             {
                 if ((*it)->contains(event.mouseButton.x, event.mouseButton.y))
                 {
+                    int ownerId{ (*it)->getOwnerId() };
+                    // if currently iterated object has an owner, and it is not this player, skip to the next one
+                    if (ownerId != cnst::defaultOwnerId && playerId != ownerId)
+                    {
+                        continue;
+                    }
+
                     if (event.mouseButton.button == sf::Mouse::Button::Left)
                     {
                         (*it)->onSelect(event, *this);
@@ -45,9 +55,9 @@ namespace nik {
             bool handled{ false };
 
             if (
-                event.type == sf::Event::MouseButtonReleased
+                (*it)->selected
+                && event.type == sf::Event::MouseButtonReleased
                 && event.mouseButton.button == sf::Mouse::Button::Left
-                && (*it)->selected
             )
             {
                 Card *card{ dynamic_cast<Card*>((*it).get()) };
@@ -70,9 +80,9 @@ namespace nik {
             
             // delete a die
             if (
-                event.type == sf::Event::KeyPressed
+                (*it)->selected
+                && event.type == sf::Event::KeyPressed
                 && event.key.code == sf::Keyboard::D
-                && (*it)->selected
             )
             {
                 Die *die{ dynamic_cast<Die*>((*it).get()) };
@@ -82,6 +92,13 @@ namespace nik {
                     m_objectList.erase((it).base() - 1);
                     continue;
                 }
+            }
+
+            int ownerId{ (*it)->getOwnerId() };
+            // if currently iterated object has an owner, and it is not this player, skip to the next one
+            if (ownerId != cnst::defaultOwnerId && playerId != ownerId)
+            {
+                continue;
             }
 
             handled = (*it)->handleEvent(event, *this);
@@ -112,6 +129,12 @@ namespace nik {
 
         for (auto it{ m_objectList.rbegin() }; it != m_objectList.rend(); ++it )
         {
+            auto ownerId{ (*it)->getOwnerId() };
+            if (ownerId != card->getOwnerId() && ownerId != cnst::defaultOwnerId)
+            {
+                continue;
+            }
+
             Deck *deck{ dynamic_cast<Deck*>((*it).get()) };
 
             if (deck && deck->getBoundingBox().intersects(card->getBoundingBox()))
@@ -144,6 +167,7 @@ namespace nik {
 
     void Board::deepCopy(const Board &board)
     {
+        m_window = board.m_window;
         m_backgroundColor = board.m_backgroundColor;
 
         m_objectList.resize(board.m_objectList.size());

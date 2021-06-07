@@ -41,7 +41,7 @@ namespace nik {
     }
 
     void GameScene::initialize(const std::string &params)
-    {   
+    {
         auto &library{ setup::getLibrary() };
 
         Deck deck{ setup::loadDeckFromFile("data/decks/deck1.dat") };
@@ -53,7 +53,7 @@ namespace nik {
         m_board.addObject(std::make_unique<Card>(library[0]));
         m_board.addObject(std::make_unique<Card>(library[1]));
 
-        auto handPtr{ std::make_unique<Hand>() };
+        auto handPtr{ std::make_unique<Hand>(m_window) };
         handPtr->putCardIn(library[0]);
         handPtr->putCardIn(library[0]);
         handPtr->putCardIn(library[1]);

@@ -19,7 +19,6 @@ namespace nik {
         void commonGraphicsUpdate();
 
     protected:
-        // TODO maybe this should be in SceneManager, which just calls Scene.update(sf::RenderWindow &window)
         sf::RenderWindow &m_window;
         RequestSceneFunction m_requestScene;
 

@@ -15,12 +15,13 @@ namespace nik {
             cardsToDraw = 1;
         }
 
-        return (cnst::screenWidth - cardsToDraw * cnst::cardWidth) / 2;
+        // TODO currently works for 4 players MAX
+        return m_ownerPosition / 2 == 0 ? 0 : m_window.getSize().x - cardsToDraw * cnst::cardWidth;
     }
 
     int Hand::getReadjustedY() const
     {
-        return cnst::screenHeight - cnst::cardHeight;
+        return m_ownerPosition % 2 == 0 ? m_window.getSize().y - cnst::cardHeight : 0;
     }
 
     // readjust position of the hand to be centered, when a card is put into or out of the hand
@@ -46,7 +47,7 @@ namespace nik {
         return { static_cast<float>(cnst::cardWidth * cardsToDraw), cnst::cardHeight };
     }
 
-    Hand::Hand()
+    Hand::Hand(sf::RenderWindow &window, int ownerPosition): m_window{ window }, m_ownerPosition{ ownerPosition }
     {
         readjustPosition();
     }
@@ -120,15 +121,21 @@ namespace nik {
         return true;
     }
 
-    bool Hand::handleEvent(const sf::Event &event, Board &board)
+    bool Hand::handleEvent(const sf::Event &event, Board &board, Role role)
     {
+        if (event.type == sf::Event::Resized)
+        {
+            readjustPosition();
+        }
+        
         int index{ 0 };
         for (auto &card : m_cardList)
         {
-            bool handled{ card.handleEvent(event, board) };
+            bool handled{ card.handleEvent(event, board, role) };
 
             // if mouse is released and Card is outside of the Hand, drop it onto the field
             // (otherwise, clip it back to its position in hand)
+            // TODO ? could have problems when implementing online play ?
             if (event.type == sf::Event::MouseButtonReleased && card.contains(event.mouseButton.x, event.mouseButton.y))
             {
                 if (card.getBoundingBox().intersects(getBoundingBox()))

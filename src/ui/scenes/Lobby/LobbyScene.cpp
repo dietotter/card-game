@@ -4,14 +4,14 @@
 #include "../../core/Text.h"
 #include "../../../net/Client.h"
 #include "../../../net/Server.h"
+#include "../../../net/network-constants.h"
 #include "../../../net/events/ConnectionEvent.h"
 #include "../../../net/events/LobbyEvent.h"
 #include "../../../core-constants.h"
 #include "../../../setup.h"
 
 #include <string>
-#include <iostream>
-#include <filesystem>
+#include <numeric> // for std::accumulate
 
 namespace nik {
 
@@ -32,6 +32,15 @@ namespace nik {
                 updatePlayersList();
             }
         }
+
+        if (event->getType() == NetworkEvent::Type::lobbyStartGame)
+        {
+            auto *startGameEvent{ dynamic_cast<StartGameEvent*>(event) };
+            if (startGameEvent)
+            {
+                this->m_requestScene("OnlineGame", startGameEvent->getParams());
+            }
+        }
     }
 
     void LobbyScene::serverEventUpdate(NetworkEvent *event)
@@ -41,7 +50,7 @@ namespace nik {
             auto *connectedEvent{ dynamic_cast<ClientConnectedEvent*>(event) };
             if (connectedEvent)
             {
-                m_players.push_back(Player(connectedEvent->getClientId()));
+                m_players.push_back(LobbyPlayer(connectedEvent->getClientId()));
                 Server::sendEvent(std::make_unique<UpdatePlayersListEvent>(m_players));
                 addPlayerToList("Player " + std::to_string(connectedEvent->getClientId()));
             }
@@ -61,7 +70,7 @@ namespace nik {
                     std::remove_if(
                         m_players.begin(),
                         m_players.end(),
-                        [id](const Player &player) {
+                        [id](const LobbyPlayer &player) {
                             return player.getId() == id;
                         }
                     ),
@@ -81,10 +90,10 @@ namespace nik {
             if (playerReadyEvent)
             {                
                 auto playerId{ playerReadyEvent->getPlayerId() };
-                Player &player{ *std::find_if(
+                LobbyPlayer &player{ *std::find_if(
                     m_players.begin(),
                     m_players.end(),
-                    [playerId](const Player &player) {
+                    [playerId](const LobbyPlayer &player) {
                         return player.getId() == playerId;
                     }
                 ) };
@@ -144,6 +153,15 @@ namespace nik {
         // TODO BUG: need to do this because without it styles do not apply to the field
         deckSelectionField->setWidth(400);
 
+        auto readyStartButton{ std::make_unique<Button>(800, 50, 700, 100) };
+        readyStartButton->setColor(sf::Color(0x550D08FF));
+        readyStartButton->setOutlineThickness(2);
+        readyStartButton->setOutlineColor(sf::Color(0x3E1507FF));
+        readyStartButton->setCharacterSize(40);
+        readyStartButton->setTextColor(sf::Color(0xD6E0FDFF));
+        readyStartButton->setTextPressedColor(sf::Color(0x929B22FF));
+        readyStartButton->setTextStyle(sf::Text::Bold);
+
         m_role = static_cast<Role>(std::stoi(params));
         if (m_role == Role::server)
         {
@@ -153,6 +171,62 @@ namespace nik {
                 // TODO send some server closed event to connected clients
                 Server::stop();
                 this->m_requestScene("Menu", "");
+                return true;
+            };
+
+            readyStartButton->setTextString("Start");
+
+            readyStartButton->onClick = [this](const sf::Event &event) {
+                auto deckSelectionIt{ std::find_if(
+                    this->m_canvas.getChildren().begin(),
+                    this->m_canvas.getChildren().end(),
+                    getUIElementNameComparator("DeckSelectionField")
+                ) };
+
+                auto deckSelectionField{ dynamic_cast<SelectionField*>(deckSelectionIt->get()) };
+
+                // if player tries to press start when he hasn't selected a deck, nothing happens
+                // (or if dynamic cast was unsuccessful)
+                // TODO probably start button should be disabled instead
+                if (!deckSelectionField || deckSelectionField->getString().isEmpty())
+                {
+                    // TODO should notify user that he needs to select a deck
+                    return true;
+                }
+
+                bool allPlayersReady{ std::accumulate(
+                    this->m_players.begin(),
+                    this->m_players.end(),
+                    true,
+                    [](bool acc, const LobbyPlayer &player) {
+                        return acc && player.isReady();
+                    }
+                ) };
+
+                // don't start the game if not all players are ready
+                if (!allPlayersReady)
+                {
+                    return true;
+                }
+
+                auto deckString{ setup::loadDeckStringFromFile(
+                    cnst::deckFolderPath + deckSelectionField->getString() + cnst::deckFileFormat
+                ) };
+
+                // create game scene params from role, deck strings and player ids to params
+                std::string params{ std::accumulate(
+                    this->m_players.begin(),
+                    this->m_players.end(),
+                    ';' + std::to_string(cnst::serverDefaultId) + ':' + deckString + ';',
+                    [](std::string acc, const LobbyPlayer &player) {
+                        return acc + std::to_string(player.getId()) + ':' + player.getDeckString() + ';';
+                    }
+                ) };
+
+                this->m_requestScene("OnlineGame", std::to_string(static_cast<int>(NetworkScene::Role::server)) + params);
+
+                Server::sendEvent(std::make_unique<StartGameEvent>(std::to_string(static_cast<int>(NetworkScene::Role::client)) + params));
+
                 return true;
             };
         }
@@ -166,22 +240,14 @@ namespace nik {
                 return true;
             };
 
-            auto readyButton{ std::make_unique<Button>(800, 50, 700, 100) };
-            readyButton->setColor(sf::Color(0x550D08FF));
-            readyButton->setOutlineThickness(2);
-            readyButton->setOutlineColor(sf::Color(0x3E1507FF));
-            readyButton->setTextString("Ready");
-            readyButton->setCharacterSize(40);
-            readyButton->setTextColor(sf::Color(0xD6E0FDFF));
-            readyButton->setTextPressedColor(sf::Color(0x929B22FF));
-            readyButton->setTextStyle(sf::Text::Bold);
+            readyStartButton->setTextString("Ready");
 
-            readyButton->onClick = [this](const sf::Event &event) {
+            readyStartButton->onClick = [this](const sf::Event &event) {
                 auto id{ Client::getIdOnServer() };
                 auto &player{ *std::find_if(
                     this->m_players.begin(),
                     this->m_players.end(),
-                    [id](const Player &player) {
+                    [id](const LobbyPlayer &player) {
                         return player.getId() == id;
                     }
                 ) };
@@ -211,13 +277,12 @@ namespace nik {
 
                 return true;
             };
-
-            m_canvas.addChild(std::move(readyButton));
         }
 
         m_canvas.addChild(std::move(playersList));
         m_canvas.addChild(std::move(deckSelectionField));
         m_canvas.addChild(std::move(quitButton));
+        m_canvas.addChild(std::move(readyStartButton));
     }
 
     std::unique_ptr<Scene> LobbyScene::clone() const

@@ -57,7 +57,7 @@ namespace nik {
         sf::SocketSelector selector;
         selector.add(m_listener);
 
-        static int clientCounter{ 0 };
+        static int clientCounter{ cnst::serverDefaultId };
 
         while (isRunning())
         {
@@ -137,7 +137,7 @@ namespace nik {
         }
 
         // clean up work after server is closed
-        clientCounter = 0;
+        clientCounter = cnst::serverDefaultId;
         // ? TODO should probably send clients some CLOSED events before ?
         m_clients.clear();
 

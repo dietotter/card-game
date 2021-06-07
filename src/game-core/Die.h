@@ -8,6 +8,8 @@ namespace nik {
 
     class Die : public GameObject
     {
+        using Role = GameObject::Role;
+
     private:
         int m_value{ 1 };
         sf::Sprite m_sprite;
@@ -23,7 +25,7 @@ namespace nik {
         virtual bool contains(int x, int y) const override;
         virtual bool onSelect(const sf::Event &event, Board &board) override;
         virtual bool onRelease(const sf::Event &event, Board &board) override;
-        virtual bool handleEvent(const sf::Event &event, Board &board) override;
+        virtual bool handleEvent(const sf::Event &event, Board &board, Role role = Role::offline) override;
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

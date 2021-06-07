@@ -12,8 +12,12 @@ namespace nik {
 
     class Hand : public GameObject
     {
+        using Role = GameObject::Role;
+
     private:
         std::vector<Card> m_cardList;
+        sf::RenderWindow &m_window;
+        int m_ownerPosition{};
 
         int getReadjustedX() const;
         int getReadjustedY() const;
@@ -21,7 +25,7 @@ namespace nik {
         sf::Vector2f getVisualSize() const;
 
     public:
-        Hand();
+        Hand(sf::RenderWindow &window, int ownerPosition = 0);
 
         Card takeCardOut(unsigned int index);
         void putCardIn(const Card& card);
@@ -33,7 +37,7 @@ namespace nik {
         virtual bool contains(int x, int y) const override;
         virtual bool onSelect(const sf::Event &event, Board &board) override;
         virtual bool onRelease(const sf::Event &event, Board &board) override;
-        virtual bool handleEvent(const sf::Event &event, Board &board) override;
+        virtual bool handleEvent(const sf::Event &event, Board &board, Role role = Role::offline) override;
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

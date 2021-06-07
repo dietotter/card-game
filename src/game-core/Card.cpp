@@ -30,9 +30,9 @@ namespace nik {
         return true;
     }
 
-    bool Card::handleEvent(const sf::Event &event, Board &board)
+    bool Card::handleEvent(const sf::Event &event, Board &board, Role role)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
+        if (selected && sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved)
         {
             setPosition(
                 event.mouseMove.x - cnst::cardWidth / 2,
@@ -42,7 +42,7 @@ namespace nik {
             return true;
         }
 
-        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F && selected)
+        if (selected && event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F)
         {
             flip();
             return true;

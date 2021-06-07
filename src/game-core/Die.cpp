@@ -37,9 +37,9 @@ namespace nik {
         return true;
     }
 
-    bool Die::handleEvent(const sf::Event &event, Board &board)
+    bool Die::handleEvent(const sf::Event &event, Board &board, Role role)
     {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved && selected)
+        if (selected && sf::Mouse::isButtonPressed(sf::Mouse::Left) && event.type == sf::Event::MouseMoved)
         {
             setPosition(
                 event.mouseMove.x - cnst::dieWidth / 2,
@@ -49,7 +49,7 @@ namespace nik {
             return true;
         }
 
-        if (event.type == sf::Event::KeyPressed && selected)
+        if (selected && event.type == sf::Event::KeyPressed)
         {
             switch(event.key.code)
             {

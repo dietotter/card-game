@@ -10,6 +10,7 @@ namespace nik {
     public:
         enum class Role
         {
+            offline,
             server,
             client
         };
